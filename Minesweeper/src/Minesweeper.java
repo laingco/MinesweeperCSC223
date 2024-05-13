@@ -1,5 +1,5 @@
 /**
- * Version - 1.1
+ * Version - 1.2
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -16,7 +16,7 @@
      private int easyGrid[][] = new int[gridSize[0]][gridSize[1]];
      private int mediumGrid[][] = new int[gridSize[2]][gridSize[3]];
      private int hardGrid[][] = new int[gridSize[4]][gridSize[5]];
-     private JFrame jframe = new JFrame("Minesweeper test");   //create JFrame object
+     private JFrame jframe = new JFrame("Minesweeper test");   //create JFrame objects
      private JButton tiles[][] = new JButton[20][24]; // -2 = uncovered -1 = bomb 0 = safe to click 1-7 = no. of mines nearby
      private boolean flagged[][] = new boolean[20][24];
      private int flags = 0;
