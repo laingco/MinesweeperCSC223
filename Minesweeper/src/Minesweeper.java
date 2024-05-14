@@ -1,5 +1,5 @@
 /**
- * Version - 1.2
+ * Version - 1.3
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -17,8 +17,9 @@
      private int mediumGrid[][] = new int[gridSize[2]][gridSize[3]];
      private int hardGrid[][] = new int[gridSize[4]][gridSize[5]];
      private JFrame jframe = new JFrame("Minesweeper test");   //create JFrame objects
-     private JButton tiles[][] = new JButton[20][24]; // -2 = uncovered -1 = bomb 0 = safe to click 1-7 = no. of mines nearby
+     private JButton tiles[][] = new JButton[20][24]; // -2 = uncovered | -1 = bomb | 0 = safe to click | 1-7 = no. of mines nearby
      private boolean flagged[][] = new boolean[20][24];
+     private boolean bombs[][] = new boolean[20][24];
      private int flags = 0;
      private JLabel flagsLabel = new JLabel("Flags left: " + flags);
  
@@ -165,18 +166,18 @@
             for (int x = 0; x < gridSize[2*difficulty-1]; x++){
                 int currentGrid[][] = new int[gridSize[2*difficulty-2]][gridSize[2*difficulty-1]];
                 currentGrid = gridPicker();
-                if(currentGrid[y][x] == 0){
-                    tiles[y][x].setText("y");
-                } else if(currentGrid[y][x] == -2){
+                if(currentGrid[y][x] == -2){
                     tiles[y][x].setIcon(uncoveredButton);
                 } else if (flagged[y][x]){
                     tiles[y][x].setIcon(flagImage);
+                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
                 } else if (!flagged[y][x]){
                     tiles[y][x].setIcon(null);
-                } else if (currentGrid[y][x] > 0){
+                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 8));
+                } else if (currentGrid[y][x] >= 0){
                     tiles[y][x].setText(Integer.toString(currentGrid[y][x]));
                 } else if (currentGrid[y][x] == -1){
-
+                    tiles[y][x].setText("B");
                 }
             }
         }
@@ -190,64 +191,91 @@
      public void plantMines(int xx, int yy) {
          int z = 0;
          int grid[][] = gridPicker();
+         int[][] nearbyMines = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
          while (z < flagSize[difficulty - 1] && !plantedMines) {
              int randX = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 1]);
              int randY = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 2]);
              if (!(grid[randY][randX] == -1) && !(randX == xx && randY == yy)) {
                  grid[randY][randX] = -1;
-                 System.out.print(randX + randY + "b ");
+                 System.out.print(randX);
+                 System.out.print(randY + "b ");
+                 bombs[randY][randX] = true;
                  z++;
              }
+         }
+
+         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                nearbyMines[y][x] = 0/*grid[y][x]*/;
+            }
+         }
+
+         System.out.println();
+         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                 System.out.print(grid[y][x]);
+             }
+             System.out.println();
          }
  
          for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
              for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                 int nearbyMines = 0;
-                 if (!(grid[y][x] == -1)) {
-                     if (x > 0) {
-                         if (grid[y][x - 1] == -1) {
-                             nearbyMines++;
-                         }
-                         if (y > 0) {
-                             if (grid[y - 1][x - 1] == -1) {
-                                 nearbyMines++;
-                             }
-                         }
-                         if (y + 1 < gridSize[2 * difficulty - 2]) {
-                             if (grid[y + 1][x - 1] == -1) {
-                                 nearbyMines++;
-                             }
-                         }
-                     }
-                     if (x + 1 < gridSize[2 * difficulty - 1]) {
-                         if (grid[y][x + 1] == -1) {
-                             nearbyMines++;
-                         }
-                         if (y > 0) {
-                             if (grid[y - 1][x + 1] == -1) {
-                                 nearbyMines++;
-                             }
-                         }
-                         if (y + 1 < gridSize[2 * difficulty - 2]) {
-                             if (grid[y + 1][x + 1] == -1) {
-                                 nearbyMines++;
-                             }
-                         }
+                 if (x > 0) {
+                     if (grid[y][x - 1] == -1) {
+                         nearbyMines[y][x]++;
                      }
                      if (y > 0) {
-                         if (grid[y - 1][x] == -1) {
-                             nearbyMines++;
+                         if (grid[y - 1][x - 1] == -1) {
+                             nearbyMines[y][x]++;
                          }
                      }
                      if (y + 1 < gridSize[2 * difficulty - 2]) {
-                         if (grid[y + 1][x] == -1) {
-                             nearbyMines++;
+                         if (grid[y + 1][x - 1] == -1) {
+                             nearbyMines[y][x]++;
                          }
                      }
                  }
-                 grid[y][x] = nearbyMines;
+                 if (x + 1 < gridSize[2 * difficulty - 1]) {
+                     if (grid[y][x + 1] == -1) {
+                         nearbyMines[y][x]++;
+                     }
+                     if (y > 0) {
+                         if (grid[y - 1][x + 1] == -1) {
+                             nearbyMines[y][x]++;
+                         }
+                     }
+                     if (y + 1 < gridSize[2 * difficulty - 2]) {
+                         if (grid[y + 1][x + 1] == -1) {
+                             nearbyMines[y][x]++;
+                         }
+                     }
+                 }
+                 if (y > 0) {
+                     if (grid[y - 1][x] == -1) {
+                         nearbyMines[y][x]++;
+                     }
+                 }
+                 if (y + 1 < gridSize[2 * difficulty - 2]) {
+                     if (grid[y + 1][x] == -1) {
+                         nearbyMines[y][x]++;
+                     }
+                 }
+                 if (x == -1 && y == -1) {
+                     nearbyMines[y][x]++;
+                 }
+
              }
          }
+         grid = nearbyMines;
+
+         System.out.println();
+         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                 System.out.print(grid[y][x]);
+             }
+             System.out.println();
+         }
+
          switch (difficulty) {
              case 1:
                  easyGrid = grid;
@@ -263,32 +291,26 @@
          }
          guiMethod();
          plantedMines = true;
-         System.out.println();
-         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
-             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                 System.out.print(grid[y][x]);
-             }
-             System.out.println();
-         }
      }
  
      public void resetGrids(){
          for (int y = 0; y < gridSize[0]; y++){
              for (int x = 0; x < gridSize[1]; x++){
-                 easyGrid[y][x] = -2;
+                 easyGrid[y][x] = 0;
              }
          }
  
          for (int y = 0; y < gridSize[2]; y++){
              for (int x = 0; x < gridSize[3]; x++){
-                 mediumGrid[y][x] = -2;
+                 mediumGrid[y][x] = 0;
              }
          }
  
          for (int y = 0; y < gridSize[4]; y++){
              for (int x = 0; x < gridSize[5]; x++){
-                 hardGrid[y][x] = -2;
+                 hardGrid[y][x] = 0;
                  flagged[y][x] = false;
+                 bombs[y][x] = false;
              }
          }
          flags = flagSize[difficulty-1];
@@ -297,48 +319,54 @@
          timer.stop();
      }
  
-     public void domainExpansion(int y, int x){
+     public void domainExpansion(int yy, int xx) {
          int grid[][] = gridPicker();
-         if (!(grid[y][x] == -1)) {
-             if (x > 0) {
-                 if (grid[y][x - 1] == -1) {
-                     
+         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                 if (x > 0) {
+                     if (grid[y][x - 1] == 0) {
+
+                     }
+                     if (y > 0) {
+                         if (grid[y - 1][x - 1] == 0) {
+
+                         }
+                     }
+                     if (y + 1 < gridSize[2 * difficulty - 2]) {
+                         if (grid[y + 1][x - 1] == 0) {
+
+                         }
+                     }
+                 }
+                 if (x + 1 < gridSize[2 * difficulty - 1]) {
+                     if (grid[y][x + 1] == 0) {
+
+                     }
+                     if (y > 0) {
+                         if (grid[y - 1][x + 1] == 0) {
+
+                         }
+                     }
+                     if (y + 1 < gridSize[2 * difficulty - 2]) {
+                         if (grid[y + 1][x + 1] == 0) {
+
+                         }
+                     }
                  }
                  if (y > 0) {
-                     if (grid[y - 1][x - 1] == -1) {
-                         
+                     if (grid[y - 1][x] == 0) {
+
                      }
                  }
                  if (y + 1 < gridSize[2 * difficulty - 2]) {
-                     if (grid[y + 1][x - 1] == -1) {
-                         
+                     if (grid[y + 1][x] == 0) {
+
                      }
                  }
-             }
-             if (x + 1 < gridSize[2 * difficulty - 1]) {
-                 if (grid[y][x + 1] == -1) {
-                     
+                 if (grid[y][x] == 0){
+                    
                  }
-                 if (y > 0) {
-                     if (grid[y - 1][x + 1] == -1) {
-                         
-                     }
-                 }
-                 if (y + 1 < gridSize[2 * difficulty - 2]) {
-                     if (grid[y + 1][x + 1] == -1) {
-                         
-                     }
-                 }
-             }
-             if (y > 0) {
-                 if (grid[y - 1][x] == -1) {
-                     
-                 }
-             }
-             if (y + 1 < gridSize[2 * difficulty - 2]) {
-                 if (grid[y + 1][x] == -1) {
-                     
-                 }
+
              }
          }
      }
