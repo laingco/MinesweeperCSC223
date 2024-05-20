@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.4
+ * Version - 1.5
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -198,7 +198,10 @@ class gui implements MouseListener {
         while (z < flagSize[difficulty - 1] && !plantedMines) {
             int randX = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 1]);
             int randY = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 2]);
-            if (!(grid[randY][randX] == -1) && !(randX == xx && randY == yy)) {
+            if (!(grid[randY][randX] == -1) 
+            && !(randX == xx - 1 && randY == yy - 1) && !(randX == xx && randY == yy - 1) && !(randX == xx + 1 && randY == yy - 1) 
+            && !(randX == xx - 1 && randY == yy) && !(randX == xx && randY == yy) && !(randX == xx + 1 && randY == yy) 
+            && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1) && !(randX == xx && randY == yy + 1)) {
                 grid[randY][randX] = -1;
                 System.out.print(randX);
                 System.out.print(randY + "b ");
@@ -323,16 +326,100 @@ class gui implements MouseListener {
         timer.stop();
     }
 
-    public void domainExpansion(int yy, int xx) {
+    public void domainExpansion(int y, int x) {
         int grid[][] = gridPicker();
-        if (grid[yy][xx] == 0){
-            grid[yy][xx] = -2;
-        }else if(grid[yy][xx] >= 0){
-            visible[yy][xx] = true;
+        if (grid[y][x] == 0) {
+            grid[y][x] = -2;
+            visible[y][x] = true;
+        } else if (grid[y][x] >= 0) {
+            visible[y][x] = true;
         }
         boolean going = true;
-        while(going){
-            //if grid[yy][xx]
+        while (going) {
+            int count = 0;
+            if (x > 0) {
+                if (grid[y][x - 1] == 0) {
+                    visible[y][x - 1] = true;
+                    count++;
+                    grid[y][x - 1] = -2;
+                }else if (visible[y][x - 1] == false) {
+                    visible[y][x - 1] = true;
+                    count++;
+                }
+                if (y > 0) {
+                    if (grid[y - 1][x - 1] == 0) {
+                        visible[y - 1][x - 1] = true;
+                        count++;
+                        grid[y - 1][x - 1] = -2;
+                    }else if(visible[y - 1][x - 1] == false) {
+                        visible[y - 1][x - 1] = true;
+                        count++;
+                    }
+                }
+                if (y + 1 < gridSize[2 * difficulty - 2]) {
+                    if (grid[y + 1][x - 1] == 0) {
+                        visible[y + 1][x - 1] = true;
+                        count++;
+                        grid[y + 1][x - 1] = -2;
+                    }else if (visible[y + 1][x - 1] == false) {
+                        visible[y + 1][x - 1] = true;
+                        count++;
+                    }
+                }
+            }
+            if (x + 1 < gridSize[2 * difficulty - 1]) {
+                if (grid[y][x + 1] == 0) {
+                    visible[y][x + 1] = true;
+                    count++;
+                    grid[y][x + 1] = -2;
+                }else if (visible[y][x + 1] == false) {
+                    visible[y][x + 1] = true;
+                    count++;
+                }
+                if (y > 0) {
+                    if (grid[y - 1][x + 1] == 0) {
+                        visible[y][x] = true;
+                        count++;
+                        grid[y - 1][x + 1] = -2;
+                    }else if (visible[y - 1][x + 1] == false) {
+                        visible[y - 1][x + 1] = true;
+                        count++;
+                    }
+                }
+                if (y + 1 < gridSize[2 * difficulty - 2]) {
+                    if (grid[y + 1][x + 1] == 0) {
+                        visible[y][x] = true;
+                        count++;
+                        grid[y + 1][x + 1] = -2;
+                    }else if (visible[y + 1][x + 1] == false) {
+                        visible[y + 1][x + 1] = true;
+                        count++;
+                    }
+                }
+            }
+            if (y > 0) {
+                if (grid[y - 1][x] == 0) {
+                    visible[y - 1][x] = true;
+                    count++;
+                    grid[y - 1][x] = -2;
+                }else if (visible[y - 1][x] == false) {
+                    visible[y - 1][x] = true;
+                    count++;
+                }
+            }
+            if (y + 1 < gridSize[2 * difficulty - 2]) {
+                if (grid[y + 1][x] == 0) {
+                    visible[y + 1][x] = true;
+                    count++;
+                    grid[y + 1][x] = -2;
+                }else if (visible[y + 1][x] == false) {
+                    visible[y + 1][x] = true;
+                    count++;
+                }
+            }
+            if (count == 0){
+                going = false;
+            }
         }
 
         
