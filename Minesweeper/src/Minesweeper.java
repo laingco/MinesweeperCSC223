@@ -335,6 +335,8 @@ class gui implements MouseListener {
             visible[y][x] = true;
         }
         boolean going = true;
+        boolean vertical = true;
+        boolean horizontal = true;
         while (going) {
             int count = 0;
             if (x > 0) {
@@ -417,12 +419,41 @@ class gui implements MouseListener {
                     count++;
                 }
             }
+
+            if (y > 0 && vertical == true){
+                if (grid[y-1][x] == -2){
+                    y--;
+                }else{
+                    vertical = false;
+                }
+            }
+
+            /*if (y+1 < gridSize[2 * difficulty - 2] && horizontal == true){
+                if (grid[y+1][x] == -2){
+                    y++;
+                }else{
+                    horizontal = false;
+                }
+            }*/
+
             if (count == 0){
                 going = false;
             }
         }
 
-        
+        /*if (grid[y][x] == 0) {
+            for (int xx = x - 1; xx <= x + 1; x++) {
+                for (int yy = y - 1; yy <= y + 1; y++) {
+                    if (xx > 0 && yy > 0 && xx + 1 < gridSize[2 * difficulty - 2]
+                            && yy + 1 < gridSize[2 * difficulty - 1]) {
+                        if (!visible[yy][xx]) {
+                            visible[yy][xx] = true;
+                            // domainExpansion(yy, xx);
+                        }
+                    }
+                }
+            }
+        }*/
     }
 
     public void mousePressed(MouseEvent e) {
