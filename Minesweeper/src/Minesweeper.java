@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.6
+ * Version - 1.7
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -17,13 +17,14 @@ class gui implements MouseListener {
     private int easyGrid[][] = new int[gridSize[0]][gridSize[1]];
     private int mediumGrid[][] = new int[gridSize[2]][gridSize[3]];
     private int hardGrid[][] = new int[gridSize[4]][gridSize[5]];
-    private JFrame jframe = new JFrame("Minesweeper test"); // create JFrame objects
-    private JButton tiles[][] = new JButton[20][24]; // -2 = uncovered | -1 = bomb | 0 = safe to click | 1-7 = no. of mines nearby
+    private JFrame jframe = new JFrame("Minesweeper game"); // create JFrame objects
+    private JButton tiles[][] = new JButton[20][24]; // -1 = bomb | 0 = safe to click | 1-8 = no. of mines nearby
     private boolean flagged[][] = new boolean[20][24];
     private boolean bombs[][] = new boolean[20][24];
     private boolean visible[][] = new boolean[20][24];
     private int flags = 0;
     private JLabel flagsLabel = new JLabel("Flags left: " + flags);
+    private boolean gameRunning = true;
 
     ImageIcon temp1 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\783503.png");
     Image image = temp1.getImage();
@@ -39,6 +40,11 @@ class gui implements MouseListener {
     Image image3 = temp3.getImage();
     Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon uncoveredButton = new ImageIcon(newimg3);
+    
+    ImageIcon temp4 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
+    Image image4 = temp4.getImage();
+    Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+    ImageIcon bombImage = new ImageIcon(newimg4);
 
     JButton reset = new JButton(resetImage);
     JMenuItem easy = new JMenuItem("Easy");
@@ -322,6 +328,7 @@ class gui implements MouseListener {
         }
         flags = flagSize[difficulty - 1];
         plantedMines = false;
+        gameRunning = true;
         timer.restart();
         timer.stop();
     }
@@ -334,7 +341,7 @@ class gui implements MouseListener {
                 for (int yy = y - 1; yy <= y + 1; yy++) {
                     if (xx >= 0 && yy >= 0 && xx + 1 <= gridSize[2 * difficulty - 1]
                             && yy + 1 <= gridSize[2 * difficulty - 2]) {
-                        if (!visible[yy][xx]) {
+                        if (!visible[yy][xx] && !flagged[yy][xx]) {
                             visible[yy][xx] = true;
                             domainExpansion(yy, xx);
                         }
@@ -343,9 +350,28 @@ class gui implements MouseListener {
             }
         }
         if (grid[y][x] > 0){
-            if (!visible[y][x]) {
+            if (!visible[y][x] && !flagged[y][x]) {
                 visible[y][x] = true;
                 domainExpansion(y, x);
+            }
+        }
+    }
+
+    public void winCheck(int yy, int xx){
+        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++){
+            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++){
+                if (bombs[yy][xx] && visible[yy][xx]){
+                    for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++){
+                        for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++){
+                            if (bombs[yyy][xxx]){
+                                tiles[yyy][xxx].setIcon(bombImage);
+                                tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
+                                gameRunning = false;
+                                timer.stop();
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -356,23 +382,17 @@ class gui implements MouseListener {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON1) {
                     System.out.println("Clicked button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    /*if (!(tiles[y][x].getIcon() == flagImage)) {
-                        //tiles[y][x].setText("O");
-                        //guiMethod();
-                    } else if (currentGrid[y][x] == 0) {
-                        domainExpansion(y, x);
-                        //guiMethod();
-                    }*/
                     if (!plantedMines) {
                         plantMines(x, y);
-                        // System.out.println("past planted mines");
                     }
                     if (!timer.isRunning()) {
                         timer.start();
-                        //System.out.println("past timer start");
                     }
-                    domainExpansion(y, x);
-                    updateScreen();
+                    if (gameRunning){
+                        domainExpansion(y, x);
+                        updateScreen();
+                        winCheck(y, x);
+                    }
                 } else if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON3) {
                     System.out.println("Flagged button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
                     if (tiles[y][x].getIcon() == flagImage) {
