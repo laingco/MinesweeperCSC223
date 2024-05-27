@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.5
+ * Version - 1.6
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -40,7 +40,7 @@ class gui implements MouseListener {
     Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon uncoveredButton = new ImageIcon(newimg3);
 
-    JButton reset = new JButton("Reset", resetImage);
+    JButton reset = new JButton(resetImage);
     JMenuItem easy = new JMenuItem("Easy");
     JMenuItem medium = new JMenuItem("Medium");
     JMenuItem hard = new JMenuItem("Hard");
@@ -169,13 +169,13 @@ class gui implements MouseListener {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 int currentGrid[][] = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
                 currentGrid = gridPicker();
-                if (currentGrid[y][x] == -2) {
+                if (currentGrid[y][x] == 0 && visible[y][x]) {
                     tiles[y][x].setIcon(uncoveredButton);
                     tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
                 } else if (flagged[y][x]) {
                     tiles[y][x].setIcon(flagImage);
                     tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
-                } else if (currentGrid[y][x] >= 0 && visible[y][x]) {
+                } else if (currentGrid[y][x] > 0 && visible[y][x]) {
                     tiles[y][x].setText(Integer.toString(currentGrid[y][x]));
                 } else if (!flagged[y][x]) {
                     tiles[y][x].setIcon(null);
@@ -328,132 +328,26 @@ class gui implements MouseListener {
 
     public void domainExpansion(int y, int x) {
         int grid[][] = gridPicker();
+
         if (grid[y][x] == 0) {
-            grid[y][x] = -2;
-            visible[y][x] = true;
-        } else if (grid[y][x] >= 0) {
-            visible[y][x] = true;
-        }
-        boolean going = true;
-        boolean vertical = true;
-        boolean horizontal = true;
-        while (going) {
-            int count = 0;
-            if (x > 0) {
-                if (grid[y][x - 1] == 0) {
-                    visible[y][x - 1] = true;
-                    count++;
-                    grid[y][x - 1] = -2;
-                }else if (visible[y][x - 1] == false) {
-                    visible[y][x - 1] = true;
-                    count++;
-                }
-                if (y > 0) {
-                    if (grid[y - 1][x - 1] == 0) {
-                        visible[y - 1][x - 1] = true;
-                        count++;
-                        grid[y - 1][x - 1] = -2;
-                    }else if(visible[y - 1][x - 1] == false) {
-                        visible[y - 1][x - 1] = true;
-                        count++;
-                    }
-                }
-                if (y + 1 < gridSize[2 * difficulty - 2]) {
-                    if (grid[y + 1][x - 1] == 0) {
-                        visible[y + 1][x - 1] = true;
-                        count++;
-                        grid[y + 1][x - 1] = -2;
-                    }else if (visible[y + 1][x - 1] == false) {
-                        visible[y + 1][x - 1] = true;
-                        count++;
-                    }
-                }
-            }
-            if (x + 1 < gridSize[2 * difficulty - 1]) {
-                if (grid[y][x + 1] == 0) {
-                    visible[y][x + 1] = true;
-                    count++;
-                    grid[y][x + 1] = -2;
-                }else if (visible[y][x + 1] == false) {
-                    visible[y][x + 1] = true;
-                    count++;
-                }
-                if (y > 0) {
-                    if (grid[y - 1][x + 1] == 0) {
-                        visible[y][x] = true;
-                        count++;
-                        grid[y - 1][x + 1] = -2;
-                    }else if (visible[y - 1][x + 1] == false) {
-                        visible[y - 1][x + 1] = true;
-                        count++;
-                    }
-                }
-                if (y + 1 < gridSize[2 * difficulty - 2]) {
-                    if (grid[y + 1][x + 1] == 0) {
-                        visible[y][x] = true;
-                        count++;
-                        grid[y + 1][x + 1] = -2;
-                    }else if (visible[y + 1][x + 1] == false) {
-                        visible[y + 1][x + 1] = true;
-                        count++;
-                    }
-                }
-            }
-            if (y > 0) {
-                if (grid[y - 1][x] == 0) {
-                    visible[y - 1][x] = true;
-                    count++;
-                    grid[y - 1][x] = -2;
-                }else if (visible[y - 1][x] == false) {
-                    visible[y - 1][x] = true;
-                    count++;
-                }
-            }
-            if (y + 1 < gridSize[2 * difficulty - 2]) {
-                if (grid[y + 1][x] == 0) {
-                    visible[y + 1][x] = true;
-                    count++;
-                    grid[y + 1][x] = -2;
-                }else if (visible[y + 1][x] == false) {
-                    visible[y + 1][x] = true;
-                    count++;
-                }
-            }
-
-            if (y > 0 && vertical == true){
-                if (grid[y-1][x] == -2){
-                    y--;
-                }else{
-                    vertical = false;
-                }
-            }
-
-            /*if (y+1 < gridSize[2 * difficulty - 2] && horizontal == true){
-                if (grid[y+1][x] == -2){
-                    y++;
-                }else{
-                    horizontal = false;
-                }
-            }*/
-
-            if (count == 0){
-                going = false;
-            }
-        }
-
-        /*if (grid[y][x] == 0) {
-            for (int xx = x - 1; xx <= x + 1; x++) {
-                for (int yy = y - 1; yy <= y + 1; y++) {
-                    if (xx > 0 && yy > 0 && xx + 1 < gridSize[2 * difficulty - 2]
-                            && yy + 1 < gridSize[2 * difficulty - 1]) {
+            for (int xx = x - 1; xx <= x + 1; xx++) {
+                for (int yy = y - 1; yy <= y + 1; yy++) {
+                    if (xx >= 0 && yy >= 0 && xx + 1 <= gridSize[2 * difficulty - 1]
+                            && yy + 1 <= gridSize[2 * difficulty - 2]) {
                         if (!visible[yy][xx]) {
                             visible[yy][xx] = true;
-                            // domainExpansion(yy, xx);
+                            domainExpansion(yy, xx);
                         }
                     }
                 }
             }
-        }*/
+        }
+        if (grid[y][x] > 0){
+            if (!visible[y][x]) {
+                visible[y][x] = true;
+                domainExpansion(y, x);
+            }
+        }
     }
 
     public void mousePressed(MouseEvent e) {
