@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.7
+ * Version - 1.8
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -129,7 +129,7 @@ class gui implements MouseListener {
                 }*/
                 tiles[y][x] = new JButton();
                 tiles[y][x].addMouseListener(this);
-                tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 8));
+                tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 10));
                 tiles[y][x].setOpaque(true);
                 tiles[y][x].setBorderPainted(false);
                 if (y % 2 == 0) {
@@ -185,7 +185,7 @@ class gui implements MouseListener {
                     tiles[y][x].setText(Integer.toString(currentGrid[y][x]));
                 } else if (!flagged[y][x]) {
                     tiles[y][x].setIcon(null);
-                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 8));
+                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 10));
                 }
             }
         }
@@ -207,7 +207,7 @@ class gui implements MouseListener {
             if (!(grid[randY][randX] == -1) 
             && !(randX == xx - 1 && randY == yy - 1) && !(randX == xx && randY == yy - 1) && !(randX == xx + 1 && randY == yy - 1) 
             && !(randX == xx - 1 && randY == yy) && !(randX == xx && randY == yy) && !(randX == xx + 1 && randY == yy) 
-            && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1) && !(randX == xx && randY == yy + 1)) {
+            && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1) && !(randX == xx + 1 && randY == yy + 1)) {
                 grid[randY][randX] = -1;
                 System.out.print(randX);
                 System.out.print(randY + "b ");
@@ -358,22 +358,35 @@ class gui implements MouseListener {
     }
 
     public void winCheck(int yy, int xx){
-        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++){
-            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++){
-                if (bombs[yy][xx] && visible[yy][xx]){
-                    for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++){
-                        for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++){
-                            if (bombs[yyy][xxx]){
-                                tiles[yyy][xxx].setIcon(bombImage);
-                                tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
-                                gameRunning = false;
-                                timer.stop();
-                            }
-                        }
+        if (bombs[yy][xx] && visible[yy][xx]){
+            for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++){
+                for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++){
+                    if (bombs[yyy][xxx]){
+                        tiles[yyy][xxx].setIcon(bombImage);
+                        tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
+                        gameRunning = false;
+                        timer.stop();
                     }
                 }
             }
         }
+        int count = 0;
+        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++){
+            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++){
+                if (visible[y][x]){
+                    count++;
+                }
+            }
+        } 
+        if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1])-flagSize[difficulty - 1]){
+            gameRunning = false;
+            timer.stop();
+        }
+        System.out.println(gridSize[2 * difficulty - 2]);
+        System.out.println(gridSize[2 * difficulty - 1]);
+        System.out.println(flagSize[difficulty - 1]);
+        System.out.println((gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]);
+        System.out.println(count);
     }
 
     public void mousePressed(MouseEvent e) {
@@ -382,34 +395,31 @@ class gui implements MouseListener {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON1) {
                     System.out.println("Clicked button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    if (!plantedMines) {
-                        plantMines(x, y);
-                    }
-                    if (!timer.isRunning()) {
-                        timer.start();
-                    }
-                    if (gameRunning){
+                    if (gameRunning){    
+                        if (!plantedMines) {
+                            plantMines(x, y);
+                        }
+                        if (!timer.isRunning()) {
+                            timer.start();
+                        }
                         domainExpansion(y, x);
                         updateScreen();
                         winCheck(y, x);
                     }
                 } else if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON3) {
                     System.out.println("Flagged button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    if (tiles[y][x].getIcon() == flagImage) {
-                        //tiles[y][x].setIcon(null);
-                        flags++;
-                        flagsLabel.setText("Flags left: " + flags);
-                        //tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 8));
-                        flagged[y][x] = false;
-                    } else /* if(currentGrid[y][x] < 0) */ {
-                        // tiles[y][x].setText("");
-                        //tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
-                        //tiles[y][x].setIcon(flagImage);
-                        flags--;
-                        flagsLabel.setText("Flags left: " + flags);
-                        flagged[y][x] = true;
+                    if (gameRunning){
+                        if (tiles[y][x].getIcon() == flagImage) {
+                            flags++;
+                            flagsLabel.setText("Flags left: " + flags);
+                            flagged[y][x] = false;
+                        } else{
+                            flags--;
+                            flagsLabel.setText("Flags left: " + flags);
+                            flagged[y][x] = true;
+                        }
+                        updateScreen();
                     }
-                    updateScreen();
                 } else if (e.getSource() == whiteAndGrey) {
                     if (y % 2 == 0) {
                         if (x % 2 == 0) {
