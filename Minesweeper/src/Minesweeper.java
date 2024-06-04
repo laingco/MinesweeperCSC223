@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.8
+ * Version - 1.9
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -22,6 +22,7 @@ class gui implements MouseListener {
     private boolean flagged[][] = new boolean[20][24];
     private boolean bombs[][] = new boolean[20][24];
     private boolean visible[][] = new boolean[20][24];
+    private int coloursInt = 0;
     private int flags = 0;
     private JLabel flagsLabel = new JLabel("Flags left: " + flags);
     private boolean gameRunning = true;
@@ -40,7 +41,7 @@ class gui implements MouseListener {
     Image image3 = temp3.getImage();
     Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon uncoveredButton = new ImageIcon(newimg3);
-    
+
     ImageIcon temp4 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
     Image image4 = temp4.getImage();
     Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
@@ -115,37 +116,30 @@ class gui implements MouseListener {
         // JButton[gridSize[2*difficulty-2]][gridSize[2*difficulty-1]];
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                //int currentGrid[][] = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
-                //currentGrid = gridPicker();
-                /*if (currentGrid[y][x] == 0) {
-                    // tiles[y][x] = new JButton(uncoveredButton);
-                    tiles[y][x] = new JButton(Integer.toString(currentGrid[y][x]));
-                } else if (currentGrid[y][x] == -2) {
-                    tiles[y][x] = new JButton();
-                } else if (flagged[y][x]) {
-                    tiles[y][x] = new JButton(flagImage);
-                } else {
-                    tiles[y][x] = new JButton(Integer.toString(currentGrid[y][x]));
-                }*/
+                // int currentGrid[][] = new int[gridSize[2 * difficulty - 2]][gridSize[2 *
+                // difficulty - 1]];
+                // currentGrid = gridPicker();
+                /*
+                 * if (currentGrid[y][x] == 0) {
+                 * // tiles[y][x] = new JButton(uncoveredButton);
+                 * tiles[y][x] = new JButton(Integer.toString(currentGrid[y][x]));
+                 * } else if (currentGrid[y][x] == -2) {
+                 * tiles[y][x] = new JButton();
+                 * } else if (flagged[y][x]) {
+                 * tiles[y][x] = new JButton(flagImage);
+                 * } else {
+                 * tiles[y][x] = new JButton(Integer.toString(currentGrid[y][x]));
+                 * }
+                 */
                 tiles[y][x] = new JButton();
                 tiles[y][x].addMouseListener(this);
                 tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 10));
                 tiles[y][x].setOpaque(true);
                 tiles[y][x].setBorderPainted(false);
-                if (y % 2 == 0) {
-                    if (x % 2 == 0) {
-                        tiles[y][x].setBackground(Color.WHITE);
-                    } else {
-                        tiles[y][x].setBackground(Color.LIGHT_GRAY);
-                    }
-                } else if (!(x % 2 == 0)) {
-                    tiles[y][x].setBackground(Color.WHITE);
-                } else {
-                    tiles[y][x].setBackground(Color.LIGHT_GRAY);
-                }
                 playArea.add(tiles[y][x]);
             }
         }
+        drawPattern();
 
         menu.add(difficultyDropdown);
         menu.add(colours);
@@ -189,7 +183,68 @@ class gui implements MouseListener {
                 }
             }
         }
+        drawPattern();
         System.out.println("Screen updated");
+    }
+
+    public void drawPattern() {
+        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                if (!visible[y][x]) {
+                    if (y % 2 == 0) {
+                        if (x % 2 == 0) {
+                            switch (coloursInt) {
+                                case 0:
+                                    tiles[y][x].setBackground(Color.WHITE);
+                                case 1:
+
+                                default:
+                                    tiles[y][x].setBackground(Color.WHITE);
+                            }
+                        } else {
+                            switch (coloursInt) {
+                                case 0:
+                                    tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                                case 1:
+
+                                default:
+                                    tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                            }
+                        }
+                    } else if (!(x % 2 == 0)) {
+                        switch (coloursInt) {
+                            case 0:
+                                tiles[y][x].setBackground(Color.WHITE);
+                            case 1:
+
+                            default:
+                                tiles[y][x].setBackground(Color.WHITE);
+                        }
+                    } else {
+                        switch (coloursInt) {
+                            case 0:
+                                tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                            case 1:
+
+                            default:
+                                tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                        }
+                    }
+                } else{
+                    if (y % 2 == 0) {
+                        if (x % 2 == 0) {
+                            tiles[y][x].setBackground(new Color(242, 213, 178));
+                        } else {
+                            tiles[y][x].setBackground(new Color(209, 184, 154));
+                        }
+                    } else if (!(x % 2 == 0)) {
+                        tiles[y][x].setBackground(new Color(242, 213, 178));
+                    } else {
+                        tiles[y][x].setBackground(new Color(209, 184, 154));
+                    }
+                }
+            }
+        }
     }
 
     private void updateTimeLabel() {
@@ -204,10 +259,13 @@ class gui implements MouseListener {
         while (z < flagSize[difficulty - 1] && !plantedMines) {
             int randX = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 1]);
             int randY = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 2]);
-            if (!(grid[randY][randX] == -1) 
-            && !(randX == xx - 1 && randY == yy - 1) && !(randX == xx && randY == yy - 1) && !(randX == xx + 1 && randY == yy - 1) 
-            && !(randX == xx - 1 && randY == yy) && !(randX == xx && randY == yy) && !(randX == xx + 1 && randY == yy) 
-            && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1) && !(randX == xx + 1 && randY == yy + 1)) {
+            if (!(grid[randY][randX] == -1)
+                    && !(randX == xx - 1 && randY == yy - 1) && !(randX == xx && randY == yy - 1)
+                    && !(randX == xx + 1 && randY == yy - 1)
+                    && !(randX == xx - 1 && randY == yy) && !(randX == xx && randY == yy)
+                    && !(randX == xx + 1 && randY == yy)
+                    && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1)
+                    && !(randX == xx + 1 && randY == yy + 1)) {
                 grid[randY][randX] = -1;
                 System.out.print(randX);
                 System.out.print(randY + "b ");
@@ -349,7 +407,7 @@ class gui implements MouseListener {
                 }
             }
         }
-        if (grid[y][x] > 0){
+        if (grid[y][x] > 0) {
             if (!visible[y][x] && !flagged[y][x]) {
                 visible[y][x] = true;
                 domainExpansion(y, x);
@@ -357,11 +415,11 @@ class gui implements MouseListener {
         }
     }
 
-    public void winCheck(int yy, int xx){
-        if (bombs[yy][xx] && visible[yy][xx]){
-            for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++){
-                for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++){
-                    if (bombs[yyy][xxx]){
+    public void winCheck(int yy, int xx) {
+        if (bombs[yy][xx] && visible[yy][xx]) {
+            for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++) {
+                for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++) {
+                    if (bombs[yyy][xxx]) {
                         tiles[yyy][xxx].setIcon(bombImage);
                         tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
                         gameRunning = false;
@@ -371,14 +429,14 @@ class gui implements MouseListener {
             }
         }
         int count = 0;
-        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++){
-            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++){
-                if (visible[y][x]){
+        for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
+            for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
+                if (visible[y][x]) {
                     count++;
                 }
             }
-        } 
-        if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1])-flagSize[difficulty - 1]){
+        }
+        if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
         }
@@ -390,12 +448,12 @@ class gui implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
-        //int currentGrid[][] = gridPicker();
+        // int currentGrid[][] = gridPicker();
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON1) {
                     System.out.println("Clicked button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    if (gameRunning){    
+                    if (gameRunning) {
                         if (!plantedMines) {
                             plantMines(x, y);
                         }
@@ -408,12 +466,12 @@ class gui implements MouseListener {
                     }
                 } else if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON3) {
                     System.out.println("Flagged button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    if (gameRunning){
+                    if (gameRunning) {
                         if (tiles[y][x].getIcon() == flagImage) {
                             flags++;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = false;
-                        } else{
+                        } else {
                             flags--;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = true;
