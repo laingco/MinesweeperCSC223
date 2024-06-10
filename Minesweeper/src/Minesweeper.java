@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.9
+ * Version - 1.10
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -22,7 +22,7 @@ class gui implements MouseListener {
     private boolean flagged[][] = new boolean[20][24];
     private boolean bombs[][] = new boolean[20][24];
     private boolean visible[][] = new boolean[20][24];
-    private int coloursInt = 0;
+    private int coloursInt = 1;
     private int flags = 0;
     private JLabel flagsLabel = new JLabel("Flags left: " + flags);
     private boolean gameRunning = true;
@@ -51,7 +51,8 @@ class gui implements MouseListener {
     JMenuItem easy = new JMenuItem("Easy");
     JMenuItem medium = new JMenuItem("Medium");
     JMenuItem hard = new JMenuItem("Hard");
-    JMenuItem whiteAndGrey = new JMenuItem("White and Grey (default)");
+    JMenuItem white = new JMenuItem("White");
+    JMenuItem green = new JMenuItem("Green (default)");
     int elapsedTime = 0;
     JLabel time = new JLabel("Time: " + elapsedTime + "s");
     boolean plantedMines = false;
@@ -133,9 +134,10 @@ class gui implements MouseListener {
                  */
                 tiles[y][x] = new JButton();
                 tiles[y][x].addMouseListener(this);
-                tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 10));
+                tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 20));
                 tiles[y][x].setOpaque(true);
                 tiles[y][x].setBorderPainted(false);
+                tiles[y][x].setMargin(new Insets(0,0,0,0));
                 playArea.add(tiles[y][x]);
             }
         }
@@ -146,12 +148,14 @@ class gui implements MouseListener {
         difficultyDropdown.add(easy);
         difficultyDropdown.add(medium);
         difficultyDropdown.add(hard);
-        colours.add(whiteAndGrey);
+        colours.add(green);
+        colours.add(white);
         easy.addMouseListener(this);
         medium.addMouseListener(this);
         hard.addMouseListener(this);
         reset.addMouseListener(this);
-        whiteAndGrey.addMouseListener(this);
+        green.addMouseListener(this);
+        white.addMouseListener(this);
 
         score.add(reset);
         score.add(flagsLabel);
@@ -169,17 +173,17 @@ class gui implements MouseListener {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 int currentGrid[][] = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
                 currentGrid = gridPicker();
-                if (currentGrid[y][x] == 0 && visible[y][x]) {
+                /*if (currentGrid[y][x] == 0 && visible[y][x]) {
                     tiles[y][x].setIcon(uncoveredButton);
                     tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
-                } else if (flagged[y][x]) {
+                } else */if (flagged[y][x]) {
                     tiles[y][x].setIcon(flagImage);
                     tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
                 } else if (currentGrid[y][x] > 0 && visible[y][x]) {
                     tiles[y][x].setText(Integer.toString(currentGrid[y][x]));
                 } else if (!flagged[y][x]) {
                     tiles[y][x].setIcon(null);
-                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 10));
+                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 20));
                 }
             }
         }
@@ -188,6 +192,15 @@ class gui implements MouseListener {
     }
 
     public void drawPattern() {
+        Color greenDarkBackground = new Color(215, 184, 153);
+        Color greenLightBackground = new Color(229, 194, 159);
+        Color greenLight = new Color(167, 217, 72);
+        Color greenDark = new Color(142, 204, 57);
+        Color whiteLight = Color.WHITE;
+        Color whiteDark = Color.LIGHT_GRAY;
+        Color whiteLightBackground;
+        Color whiteDarkBackground;
+
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 if (!visible[y][x]) {
@@ -195,52 +208,108 @@ class gui implements MouseListener {
                         if (x % 2 == 0) {
                             switch (coloursInt) {
                                 case 0:
-                                    tiles[y][x].setBackground(Color.WHITE);
+                                    tiles[y][x].setBackground(whiteLight);
+                                    break;
                                 case 1:
-
+                                    tiles[y][x].setBackground(greenLight);
+                                    break;
                                 default:
-                                    tiles[y][x].setBackground(Color.WHITE);
+                                    tiles[y][x].setBackground(greenLight);
+                                    break;
                             }
                         } else {
                             switch (coloursInt) {
                                 case 0:
-                                    tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                                    tiles[y][x].setBackground(whiteDark);
+                                    break;
                                 case 1:
-
+                                    tiles[y][x].setBackground(greenDark);
+                                    break;
                                 default:
-                                    tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                                    tiles[y][x].setBackground(greenDark);
+                                    break;
                             }
                         }
                     } else if (!(x % 2 == 0)) {
                         switch (coloursInt) {
                             case 0:
-                                tiles[y][x].setBackground(Color.WHITE);
+                                tiles[y][x].setBackground(whiteLight);
+                                break;
                             case 1:
-
+                                tiles[y][x].setBackground(greenLight);
+                                break;
                             default:
-                                tiles[y][x].setBackground(Color.WHITE);
+                                tiles[y][x].setBackground(greenLight);
+                                break;
                         }
                     } else {
                         switch (coloursInt) {
                             case 0:
-                                tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                                tiles[y][x].setBackground(whiteDark);
+                                break;
                             case 1:
-
+                                tiles[y][x].setBackground(greenDark);
+                                break;
                             default:
-                                tiles[y][x].setBackground(Color.LIGHT_GRAY);
+                                tiles[y][x].setBackground(greenDark);
+                                break;
                         }
                     }
-                } else{
+                } else {
                     if (y % 2 == 0) {
                         if (x % 2 == 0) {
-                            tiles[y][x].setBackground(new Color(242, 213, 178));
+
+                            switch (coloursInt) {
+                                case 0:
+                                    tiles[y][x].setBackground(Color.GRAY);
+                                    break;
+                                case 1:
+                                    tiles[y][x].setBackground(greenLightBackground);
+                                    break;
+                                default:
+                                    tiles[y][x].setBackground(greenLightBackground);
+                                    break;
+                            }
                         } else {
-                            tiles[y][x].setBackground(new Color(209, 184, 154));
+
+                            switch (coloursInt) {
+                                case 0:
+                                    tiles[y][x].setBackground(Color.DARK_GRAY);
+                                    break;
+                                case 1:
+                                    tiles[y][x].setBackground(greenDarkBackground);
+                                    break;
+                                default:
+                                    tiles[y][x].setBackground(greenDarkBackground);
+                                    break;
+                            }
                         }
                     } else if (!(x % 2 == 0)) {
-                        tiles[y][x].setBackground(new Color(242, 213, 178));
+
+                        switch (coloursInt) {
+                            case 0:
+                                tiles[y][x].setBackground(Color.GRAY);
+                                break;
+                            case 1:
+                                tiles[y][x].setBackground(greenLightBackground);
+                                break;
+                            default:
+                                tiles[y][x].setBackground(greenLightBackground);
+                                break;
+                        }
                     } else {
-                        tiles[y][x].setBackground(new Color(209, 184, 154));
+
+                        switch (coloursInt) {
+                            case 0:
+                                tiles[y][x].setBackground(Color.DARK_GRAY);
+                                break;
+                            case 1:
+                                tiles[y][x].setBackground(greenDarkBackground);
+                                break;
+                            default:
+                                tiles[y][x].setBackground(greenDarkBackground);
+                                break;
+                        }
                     }
                 }
             }
@@ -471,36 +540,26 @@ class gui implements MouseListener {
                             flags++;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = false;
-                        } else {
+                        } else if(!visible[y][x]){
                             flags--;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = true;
                         }
                         updateScreen();
                     }
-                } else if (e.getSource() == whiteAndGrey) {
-                    if (y % 2 == 0) {
-                        if (x % 2 == 0) {
-                            tiles[y][x].setBackground(Color.WHITE);
-                            tiles[y][x].setOpaque(true);
-                            tiles[y][x].setBorderPainted(false);
-                        } else {
-                            tiles[y][x].setBackground(Color.LIGHT_GRAY);
-                            tiles[y][x].setOpaque(true);
-                            tiles[y][x].setBorderPainted(false);
-                        }
-                    } else if (!(x % 2 == 0)) {
-                        tiles[y][x].setBackground(Color.WHITE);
-                        tiles[y][x].setOpaque(true);
-                        tiles[y][x].setBorderPainted(false);
-                    } else {
-                        tiles[y][x].setBackground(Color.LIGHT_GRAY);
-                        tiles[y][x].setOpaque(true);
-                        tiles[y][x].setBorderPainted(false);
-                    }
                 }
 
             }
+        }
+
+        if (e.getSource() == white) {
+            coloursInt = 0;
+            System.out.println("white");
+            updateScreen();
+        } else if (e.getSource() == green) {
+            coloursInt = 1;
+            System.out.println("green");
+            updateScreen();
         }
 
         if (e.getSource() == easy) {
