@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.10
+ * Version - 1.11
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
