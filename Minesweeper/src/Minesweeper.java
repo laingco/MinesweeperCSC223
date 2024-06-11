@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.11
+ * Version - 1.12
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -54,6 +54,8 @@ class gui implements MouseListener {
     JMenuItem white = new JMenuItem("White");
     JMenuItem green = new JMenuItem("Green (default)");
     JMenuItem blue = new JMenuItem("Blue");
+    JMenuItem blueAndRed = new JMenuItem("Blue and Red");
+    JMenuItem purpleAndGreen = new JMenuItem("Purple and Green");
     int elapsedTime = 0;
     JLabel time = new JLabel("Time: " + elapsedTime + "s");
     boolean plantedMines = false;
@@ -137,6 +139,8 @@ class gui implements MouseListener {
         colours.add(green);
         colours.add(white);
         colours.add(blue);
+        colours.add(blueAndRed);
+        colours.add(purpleAndGreen);
         easy.addMouseListener(this);
         medium.addMouseListener(this);
         hard.addMouseListener(this);
@@ -144,6 +148,8 @@ class gui implements MouseListener {
         green.addMouseListener(this);
         white.addMouseListener(this);
         blue.addMouseListener(this);
+        blueAndRed.addMouseListener(this);
+        purpleAndGreen.addMouseListener(this);
 
         score.add(reset);
         score.add(flagsLabel);
@@ -181,10 +187,10 @@ class gui implements MouseListener {
     }
 
     public void drawPattern() {
-        Color greenDarkBackground = new Color(215, 184, 153);
-        Color greenLightBackground = new Color(229, 194, 159);
         Color greenLight = new Color(167, 217, 72);
         Color greenDark = new Color(142, 204, 57);
+        Color greenDarkBackground = new Color(215, 184, 153);
+        Color greenLightBackground = new Color(229, 194, 159);
         Color whiteLight = new Color(255, 255, 255);
         Color whiteDark = new Color(200, 200, 200);
         Color whiteLightBackground = new Color(130, 130, 130);
@@ -193,6 +199,14 @@ class gui implements MouseListener {
         Color blueDark = new Color(78, 181, 180);
         Color blueLightBackground = new Color(51, 120, 156);
         Color blueDarkBackground = new Color(53, 87, 128);
+        Color blueAndRedLight = new Color(58, 147, 195);
+        Color blueAndRedDark = new Color(16, 101, 171);
+        Color blueAndRedLightBackground = new Color(215, 95, 76);
+        Color blueAndRedDarkBackground = new Color(179, 21, 41);
+        Color purpleAndGreenLight = new Color(92, 174, 99);
+        Color purpleAndGreenDark = new Color(27, 121, 57);
+        Color purpleAndGreenLightBackground = new Color(152, 110, 172);
+        Color purpleAndGreenDarkBackground = new Color(116, 40, 129);
 
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
@@ -209,6 +223,12 @@ class gui implements MouseListener {
                                 case 2:
                                     tiles[y][x].setBackground(blueLight);
                                     break;
+                                case 3:
+                                    tiles[y][x].setBackground(blueAndRedLight);
+                                    break;
+                                case 4:
+                                    tiles[y][x].setBackground(purpleAndGreenLight);
+                                    break;
                                 default:
                                     tiles[y][x].setBackground(greenLight);
                                     break;
@@ -223,6 +243,12 @@ class gui implements MouseListener {
                                     break;
                                 case 2:
                                     tiles[y][x].setBackground(blueDark);
+                                    break;
+                                case 3:
+                                    tiles[y][x].setBackground(blueAndRedDark);
+                                    break;
+                                case 4:
+                                    tiles[y][x].setBackground(purpleAndGreenDark);
                                     break;
                                 default:
                                     tiles[y][x].setBackground(greenDark);
@@ -240,6 +266,12 @@ class gui implements MouseListener {
                             case 2:
                                 tiles[y][x].setBackground(blueLight);
                                 break;
+                            case 3:
+                                tiles[y][x].setBackground(blueAndRedLight);
+                                break;
+                            case 4:
+                                tiles[y][x].setBackground(purpleAndGreenLight);
+                                break;
                             default:
                                 tiles[y][x].setBackground(greenLight);
                                 break;
@@ -254,6 +286,12 @@ class gui implements MouseListener {
                                 break;
                             case 2:
                                 tiles[y][x].setBackground(blueDark);
+                                break;
+                            case 3:
+                                tiles[y][x].setBackground(blueAndRedDark);
+                                break;
+                            case 4:
+                                tiles[y][x].setBackground(purpleAndGreenDark);
                                 break;
                             default:
                                 tiles[y][x].setBackground(greenDark);
@@ -274,6 +312,12 @@ class gui implements MouseListener {
                                 case 2:
                                     tiles[y][x].setBackground(blueLightBackground);
                                     break;
+                                case 3:
+                                    tiles[y][x].setBackground(blueAndRedLightBackground);
+                                    break;
+                                case 4:
+                                    tiles[y][x].setBackground(purpleAndGreenLightBackground);
+                                    break;
                                 default:
                                     tiles[y][x].setBackground(greenLightBackground);
                                     break;
@@ -289,6 +333,12 @@ class gui implements MouseListener {
                                     break;
                                 case 2:
                                     tiles[y][x].setBackground(blueDarkBackground);
+                                    break;
+                                case 3:
+                                    tiles[y][x].setBackground(blueAndRedDarkBackground);
+                                    break;
+                                case 4:
+                                    tiles[y][x].setBackground(purpleAndGreenDarkBackground);
                                     break;
                                 default:
                                     tiles[y][x].setBackground(greenDarkBackground);
@@ -307,6 +357,12 @@ class gui implements MouseListener {
                             case 2:
                                 tiles[y][x].setBackground(blueLightBackground);
                                 break;
+                            case 3:
+                                tiles[y][x].setBackground(blueAndRedLightBackground);
+                                break;
+                            case 4:
+                                tiles[y][x].setBackground(purpleAndGreenLightBackground);
+                                break;
                             default:
                                 tiles[y][x].setBackground(greenLightBackground);
                                 break;
@@ -322,6 +378,12 @@ class gui implements MouseListener {
                                 break;
                             case 2:
                                 tiles[y][x].setBackground(blueDarkBackground);
+                                break;
+                            case 3:
+                                tiles[y][x].setBackground(blueAndRedDarkBackground);
+                                break;
+                            case 4:
+                                tiles[y][x].setBackground(purpleAndGreenDarkBackground);
                                 break;
                             default:
                                 tiles[y][x].setBackground(greenDarkBackground);
@@ -580,6 +642,14 @@ class gui implements MouseListener {
         } else if (e.getSource() == blue){
             coloursInt = 2;
             System.out.println("blue");
+            updateScreen();
+        } else if (e.getSource() == blueAndRed) {
+            coloursInt = 3;
+            System.out.println("blue and red");
+            updateScreen();
+        } else if (e.getSource() == purpleAndGreen) {
+            coloursInt = 4;
+            System.out.println("purple and green");
             updateScreen();
         }
 
