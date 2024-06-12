@@ -26,23 +26,24 @@ class gui implements MouseListener {
     private int flags = 0;
     private JLabel flagsLabel = new JLabel("Flags left: " + flags);
     private boolean gameRunning = true;
+    private String dir = System.getProperty("user.dir");
 
-    ImageIcon temp1 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\783503.png");
+    ImageIcon temp1 = new ImageIcon("assets/783503.png");
     Image image = temp1.getImage();
     Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
     ImageIcon resetImage = new ImageIcon(newimg);
 
-    ImageIcon temp2 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\7628490.png");
+    ImageIcon temp2 = new ImageIcon("assets/7628490.png");
     Image image2 = temp2.getImage();
     Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon flagImage = new ImageIcon(newimg2);
 
-    ImageIcon temp3 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\Eo_circle_green_checkmark.svg.png");
+    ImageIcon temp3 = new ImageIcon("assets/Eo_circle_green_checkmark.svg.png");
     Image image3 = temp3.getImage();
     Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon uncoveredButton = new ImageIcon(newimg3);
 
-    ImageIcon temp4 = new ImageIcon("MinesweeperCSC223\\Minesweeper\\src\\ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
+    ImageIcon temp4 = new ImageIcon("assets/ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
     Image image4 = temp4.getImage();
     Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon bombImage = new ImageIcon(newimg4);
@@ -160,7 +161,7 @@ class gui implements MouseListener {
         jframe.getContentPane().add(BorderLayout.NORTH, score);
         jframe.getContentPane().add(BorderLayout.CENTER, playArea);
         jframe.setVisible(true);
-        System.out.println(playArea.getWidth());
+        System.out.println(dir);
     }
 
     public void updateScreen() {
