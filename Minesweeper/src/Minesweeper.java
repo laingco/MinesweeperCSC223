@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.12
+ * Version - 1.13
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -28,22 +28,22 @@ class gui implements MouseListener {
     private boolean gameRunning = true;
     private String dir = System.getProperty("user.dir");
 
-    ImageIcon temp1 = new ImageIcon("assets/783503.png");
+    ImageIcon temp1 = new ImageIcon("Minesweeper/assets/783503.png");
     Image image = temp1.getImage();
     Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
     ImageIcon resetImage = new ImageIcon(newimg);
 
-    ImageIcon temp2 = new ImageIcon("assets/7628490.png");
+    ImageIcon temp2 = new ImageIcon("Minesweeper/assets/7628490.png");
     Image image2 = temp2.getImage();
     Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon flagImage = new ImageIcon(newimg2);
 
-    ImageIcon temp3 = new ImageIcon("assets/Eo_circle_green_checkmark.svg.png");
+    ImageIcon temp3 = new ImageIcon("Minesweeper/assets/Eo_circle_green_checkmark.svg.png");
     Image image3 = temp3.getImage();
     Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon uncoveredButton = new ImageIcon(newimg3);
 
-    ImageIcon temp4 = new ImageIcon("assets/ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
+    ImageIcon temp4 = new ImageIcon("Minesweeper/assets/ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
     Image image4 = temp4.getImage();
     Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon bombImage = new ImageIcon(newimg4);
