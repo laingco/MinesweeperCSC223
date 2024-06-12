@@ -99,6 +99,15 @@ class gui implements MouseListener {
 
     public void guiMethod() {
         jframe.getContentPane().removeAll();
+        easy.removeMouseListener(this);
+        medium.removeMouseListener(this);
+        hard.removeMouseListener(this);
+        reset.removeMouseListener(this);
+        green.removeMouseListener(this);
+        white.removeMouseListener(this);
+        blue.removeMouseListener(this);
+        blueAndRed.removeMouseListener(this);
+        purpleAndGreen.removeMouseListener(this);
 
         JPanel score = new JPanel();
         JPanel playArea = new JPanel();
