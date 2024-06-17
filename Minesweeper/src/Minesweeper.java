@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.13
+ * Version - 1.14
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.event.*;
 
 class gui implements MouseListener {
+    private static int SCREEN_WIDTH = 1050;
+    private static int SCREEN_HEIGHT = 900;
     private int difficulty = 2;
     private int gridSize[] = { 8, 10, 14, 18, 20, 24 };
     private int flagSize[] = { 10, 40, 99 };
@@ -26,24 +28,18 @@ class gui implements MouseListener {
     private int flags = 0;
     private JLabel flagsLabel = new JLabel("Flags left: " + flags);
     private boolean gameRunning = true;
-    private String dir = System.getProperty("user.dir");
 
-    ImageIcon temp1 = new ImageIcon("Minesweeper/assets/783503.png");
+    ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png");
     Image image = temp1.getImage();
     Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH);
     ImageIcon resetImage = new ImageIcon(newimg);
 
-    ImageIcon temp2 = new ImageIcon("Minesweeper/assets/7628490.png");
+    ImageIcon temp2 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/flagImage.png");
     Image image2 = temp2.getImage();
     Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon flagImage = new ImageIcon(newimg2);
 
-    ImageIcon temp3 = new ImageIcon("Minesweeper/assets/Eo_circle_green_checkmark.svg.png");
-    Image image3 = temp3.getImage();
-    Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-    ImageIcon uncoveredButton = new ImageIcon(newimg3);
-
-    ImageIcon temp4 = new ImageIcon("Minesweeper/assets/ae0d1e80-6f46-11e9-96b3-b7757a65a1c7.png");
+    ImageIcon temp4 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/bombImage.png");
     Image image4 = temp4.getImage();
     Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     ImageIcon bombImage = new ImageIcon(newimg4);
@@ -59,6 +55,7 @@ class gui implements MouseListener {
     JMenuItem purpleAndGreen = new JMenuItem("Purple and Green");
     int elapsedTime = 0;
     JLabel time = new JLabel("Time: " + elapsedTime + "s");
+    int gameEndTime = 0;
     boolean plantedMines = false;
 
     Timer timer = new Timer(1000, new ActionListener() {
@@ -113,7 +110,7 @@ class gui implements MouseListener {
         JPanel playArea = new JPanel();
         playArea.setLayout(new GridLayout(gridSize[2 * difficulty - 2], gridSize[2 * difficulty - 1]));
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setSize(1050, 900); // set size of GUI screen
+        jframe.setSize(SCREEN_WIDTH, SCREEN_HEIGHT); // set size of GUI screen
         jframe.setVisible(true);
 
         elapsedTime = 0;
@@ -135,7 +132,7 @@ class gui implements MouseListener {
                 tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 20));
                 tiles[y][x].setOpaque(true);
                 tiles[y][x].setBorderPainted(false);
-                tiles[y][x].setMargin(new Insets(0,0,0,0));
+                tiles[y][x].setMargin(new Insets(0, 0, 0, 0));
                 playArea.add(tiles[y][x]);
             }
         }
@@ -170,7 +167,6 @@ class gui implements MouseListener {
         jframe.getContentPane().add(BorderLayout.NORTH, score);
         jframe.getContentPane().add(BorderLayout.CENTER, playArea);
         jframe.setVisible(true);
-        System.out.println(dir);
     }
 
     public void updateScreen() {
@@ -178,10 +174,12 @@ class gui implements MouseListener {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
                 int currentGrid[][] = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
                 currentGrid = gridPicker();
-                /*if (currentGrid[y][x] == 0 && visible[y][x]) {
-                    tiles[y][x].setIcon(uncoveredButton);
-                    tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
-                } else */if (flagged[y][x]) {
+                /*
+                 * if (currentGrid[y][x] == 0 && visible[y][x]) {
+                 * tiles[y][x].setIcon(uncoveredButton);
+                 * tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
+                 * } else
+                 */if (flagged[y][x]) {
                     tiles[y][x].setIcon(flagImage);
                     tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 0));
                 } else if (currentGrid[y][x] > 0 && visible[y][x]) {
@@ -405,7 +403,7 @@ class gui implements MouseListener {
         }
     }
 
-    private void updateTimeLabel() {
+    public void updateTimeLabel() {
         elapsedTime++;
         time.setText("Time: " + elapsedTime + "s");
     }
@@ -582,6 +580,7 @@ class gui implements MouseListener {
                         tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
                         gameRunning = false;
                         timer.stop();
+                        gameOver(0);
                     }
                 }
             }
@@ -597,12 +596,58 @@ class gui implements MouseListener {
         if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
+            gameOver(1);
         }
         System.out.println(gridSize[2 * difficulty - 2]);
         System.out.println(gridSize[2 * difficulty - 1]);
         System.out.println(flagSize[difficulty - 1]);
         System.out.println((gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]);
         System.out.println(count);
+    }
+
+    public void stopListeners() {
+        jframe.getContentPane().removeAll();
+        easy.removeMouseListener(this);
+        medium.removeMouseListener(this);
+        hard.removeMouseListener(this);
+        reset.removeMouseListener(this);
+        green.removeMouseListener(this);
+        white.removeMouseListener(this);
+        blue.removeMouseListener(this);
+        blueAndRed.removeMouseListener(this);
+        purpleAndGreen.removeMouseListener(this);
+    }
+
+    public void gameOver(int state) {
+        if (state == 0) {
+            stopListeners();
+            JButton endScreen = new JButton("<html>Game Over! You Lost!<br>Press the screen to try again.</html>");
+            endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3,
+                    (SCREEN_HEIGHT / 5) * 3);
+            endScreen.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    resetGrids();
+                    guiMethod();
+                }
+            });
+            endScreen.setMargin(new Insets(0, 0, 0, 0));
+            endScreen.setFont(new Font("Serif", Font.PLAIN, 50));
+            jframe.add(endScreen);
+        } else {
+            stopListeners();
+            JButton endScreen = new JButton(
+                    "<html>You won in " + elapsedTime + " seconds!<br>Press the screen to play again.</html>");
+            endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3, (SCREEN_HEIGHT / 5) * 3);
+            endScreen.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    resetGrids();
+                    guiMethod();
+                }
+            });
+            endScreen.setMargin(new Insets(0, 0, 0, 0));
+            endScreen.setFont(new Font("Serif", Font.PLAIN, 50));
+            jframe.add(endScreen);
+        }
     }
 
     public void mousePressed(MouseEvent e) {
@@ -629,7 +674,7 @@ class gui implements MouseListener {
                             flags++;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = false;
-                        } else if(!visible[y][x]){
+                        } else if (!visible[y][x]) {
                             flags--;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = true;
@@ -649,7 +694,7 @@ class gui implements MouseListener {
             coloursInt = 1;
             System.out.println("green");
             updateScreen();
-        } else if (e.getSource() == blue){
+        } else if (e.getSource() == blue) {
             coloursInt = 2;
             System.out.println("blue");
             updateScreen();
