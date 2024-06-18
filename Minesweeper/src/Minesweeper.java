@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.16
+ * Version - 1.17
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -620,7 +620,7 @@ class gui implements MouseListener {
     public void gameOver(int state) {
         if (state == 0) {
             try{
-                Thread.sleep(1500);
+                Thread.sleep(2500);
             }catch(InterruptedException e){
                 System.out.println(e);
             }
@@ -636,6 +636,7 @@ class gui implements MouseListener {
             endScreen.setMargin(new Insets(0, 0, 0, 0));
             endScreen.setFont(new Font("Serif", Font.PLAIN, 50));
             jframe.add(endScreen);
+            endScreen.repaint();
         } else {
             stopListeners();
             JButton endScreen = new JButton(
