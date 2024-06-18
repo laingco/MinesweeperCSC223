@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.15
+ * Version - 1.16
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -573,21 +573,19 @@ class gui implements MouseListener {
 
     public void winCheck(int yy, int xx) {
         if (bombs[yy][xx] && visible[yy][xx]) {
-            System.out.println("inside if statemnt");
             for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++) {
                 for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++) {
                     if (bombs[yyy][xxx]) {
                         tiles[yyy][xxx].setIcon(bombImage);
                         tiles[yyy][xxx].setFont(new Font("Serif", Font.PLAIN, 0));
-                        System.out.println("inside for if");
                     }
-                    System.out.println("inside for loop");
                 }
             }
-            System.out.println("outside for loops");
             gameRunning = false;
             timer.stop();
-            gameOver(0);
+            Timer delayTimer = new Timer(100, e -> gameOver(0));
+            delayTimer.setRepeats(false);
+            delayTimer.start();
         }
         int count = 0;
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
@@ -600,13 +598,10 @@ class gui implements MouseListener {
         if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
-            gameOver(1);
+            Timer delayTimer2 = new Timer(100, e -> gameOver(1));
+            delayTimer2.setRepeats(false);
+            delayTimer2.start();
         }
-        /*System.out.println(gridSize[2 * difficulty - 2]);
-        System.out.println(gridSize[2 * difficulty - 1]);
-        System.out.println(flagSize[difficulty - 1]);
-        System.out.println((gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]);
-        System.out.println(count);*/
     }
 
     public void stopListeners() {
@@ -623,7 +618,6 @@ class gui implements MouseListener {
     }
 
     public void gameOver(int state) {
-        System.out.println("inside game over");
         if (state == 0) {
             try{
                 Thread.sleep(1500);
@@ -631,9 +625,8 @@ class gui implements MouseListener {
                 System.out.println(e);
             }
             stopListeners();
-            JButton endScreen = new JButton("<html>Game Over! You Lost!<br>Press the screen to try again.</html>");
-            endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3,
-                    (SCREEN_HEIGHT / 5) * 3);
+            JButton endScreen = new JButton("<html>Game Over! You Lost!<br>Press the button to try again.</html>");
+            endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3, (SCREEN_HEIGHT / 5) * 3);
             endScreen.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     resetGrids();
@@ -646,7 +639,7 @@ class gui implements MouseListener {
         } else {
             stopListeners();
             JButton endScreen = new JButton(
-                    "<html>You won in " + elapsedTime + " seconds!<br>Press the screen to play again.</html>");
+                    "<html>You won in " + elapsedTime + " seconds!<br>Press the button to play again.</html>");
             endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3, (SCREEN_HEIGHT / 5) * 3);
             endScreen.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
