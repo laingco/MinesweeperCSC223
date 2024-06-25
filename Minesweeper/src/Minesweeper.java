@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.19
+ * Version - 1.20
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -30,9 +30,9 @@ class gui implements MouseListener {
     private boolean gameRunning = true; //Stores whether the game is running or not
 
     private ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
-    private Image image = temp1.getImage(); //Converts to an standard image for resizing
-    private Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH); //Resizes the image
-    private ImageIcon resetImage = new ImageIcon(newimg); //Converts the image back to an image icon.
+    private Image image1 = temp1.getImage(); //Converts to an standard image for resizing
+    private Image newimg1 = image1.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH); //Resizes the image
+    private ImageIcon resetImage = new ImageIcon(newimg1); //Converts the image back to an image icon.
 
     //See above
     private ImageIcon temp2 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/flagImage.png");
@@ -46,7 +46,26 @@ class gui implements MouseListener {
     private Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     private ImageIcon bombImage = new ImageIcon(newimg3);
 
+    //See above
+    private ImageIcon temp4 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/dropdownArrow.png");
+    private Image image4 = temp4.getImage();
+    private Image newimg4 = image4.getScaledInstance(12, 12, java.awt.Image.SCALE_SMOOTH);
+    private ImageIcon dropdownImage = new ImageIcon(newimg4);
+
     private JButton reset = new JButton(resetImage); //Reset button
+    private JMenuItem infoPanel = new JMenuItem("<html><h1>How to Play Minesweeper</h1>\n" + //
+                "    <ol>\n" + //
+                "        <li><strong>Objective:</strong> The objective of Minesweeper is to clear a board containing hidden mines without detonating any of them.</li>\n" + //
+                "        <li><strong>Game Board:</strong> The game board consists of a grid of squares. Some squares contain mines (bombs), and others are safe.</li>\n" + //
+                "        <li><strong>Starting:</strong> Click on any square to start the game. This square and its neighboring squares will be revealed. If the square you click on is a mine, you lose.</li>\n" + //
+                "        <li><strong>Numbers:</strong> If a square does not contain a mine, it will show a number indicating how many mines are adjacent to it (including diagonally adjacent squares).</li>\n" + //
+                "        <li><strong>Using Numbers:</strong> Use the numbers revealed to deduce which squares are safe to click. For example, if a square shows '1', it means there is 1 mine in one of its adjacent squares.</li>\n" + //
+                "        <li><strong>Flagging Mines:</strong> If you suspect a square contains a mine, you can right-click (or long-press on touch devices) to flag it. This helps you keep track of where the mines are.</li>\n" + //
+                "        <li><strong>Winning:</strong> To win, you need to successfully uncover all the squares that do not contain mines. This requires careful deduction and a bit of luck.</li>\n" + //
+                "        <li><strong>Strategy:</strong> Start with the squares that are least likely to contain mines based on adjacent numbers. Use logical deduction to progress through the board.</li>\n" + //
+                "        <li><strong>Restart:</strong> If you hit a mine, the game ends. You can start a new game by clicking the restart button or choosing a new difficulty level.</li>\n" + //
+                "        <li><strong>Difficulty Levels:</strong> Minesweeper typically offers different difficulty levels, changing the size of the grid and the number of mines, to provide varied challenges.</li>\n" + //
+                "    </ol></html>");
     private JMenuItem easy = new JMenuItem("Easy"); //Easy button
     private JMenuItem medium = new JMenuItem("Medium"); //Medium button
     private JMenuItem hard = new JMenuItem("Hard"); //Hard button
@@ -139,10 +158,13 @@ class gui implements MouseListener {
         time.setText("Time: " + elapsedTime + "s"); //Sets the timer text
         JMenuBar menu = new JMenuBar(); //Defines the menu bar
         JMenu difficultyDropdown = new JMenu("Difficulty"); //Adds difficulty menu
+        JLabel dropdownArrow1 = new JLabel(dropdownImage); //Adds dropdown arrow
         JMenu colours = new JMenu("Colours"); //Adds colour menu
+        JLabel dropdownArrow2 = new JLabel(dropdownImage); //Adds dropdown arrow
         JLabel difficultyLabel = new JLabel("Difficulty: " + difficultyPicker()); //Sets the difficulty label
         flags = flagSize[difficulty - 1]; //Sets the flag count
         flagsLabel.setText("Flags left: " + flags); //Updated flag label
+        JMenu infoMenu = new JMenu("How to play");
 
         //Fills tiles array
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
@@ -159,7 +181,10 @@ class gui implements MouseListener {
 
         //Adds components and their listeners
         menu.add(difficultyDropdown);
+        menu.add(dropdownArrow1);
         menu.add(colours);
+        menu.add(dropdownArrow2);
+        menu.add(infoMenu);
         difficultyDropdown.add(easy);
         difficultyDropdown.add(medium);
         difficultyDropdown.add(hard);
@@ -182,6 +207,7 @@ class gui implements MouseListener {
         score.add(time);
         score.add(menu);
         score.add(difficultyLabel);
+        infoMenu.add(infoPanel);
 
         //Assign jpanel positions and set visible
         jframe.getContentPane().add(BorderLayout.NORTH, score);
@@ -607,33 +633,48 @@ class gui implements MouseListener {
      * reruns the method again.
      * If the original inputted value is not a 0 it checks if the square is not yet visible and not flagged and then makes it visible and 
      * runs the method again.
-     * 
      * What this ends up doing is recursively expanding safe squares stopping when it reaches an unknown square.
      */
 
     public void domainExpansion(int y, int x) {
-        int grid[][] = gridPicker();
+        int grid[][] = gridPicker(); //Grabs the appropriate difficulty grid
 
-        if (grid[y][x] == 0) {
-            for (int xx = x - 1; xx <= x + 1; xx++) {
-                for (int yy = y - 1; yy <= y + 1; yy++) {
-                    if (xx >= 0 && yy >= 0 && xx + 1 <= gridSize[2 * difficulty - 1]
+        if (grid[y][x] == 0) { //Runs when the clicked square is a 0 (completely safe)
+            for (int xx = x - 1; xx <= x + 1; xx++) { //Loops through the surrounding 3x3 in columns
+                for (int yy = y - 1; yy <= y + 1; yy++) { //Loops through the surrounding 3x3 in rows
+                    if (xx >= 0 && yy >= 0 && xx + 1 <= gridSize[2 * difficulty - 1] //Checks whether current square in 3x3 is within game bounds to ensure game doesn't break
                             && yy + 1 <= gridSize[2 * difficulty - 2]) {
-                        if (!visible[yy][xx] && !flagged[yy][xx]) {
-                            visible[yy][xx] = true;
-                            domainExpansion(yy, xx);
+                        if (!visible[yy][xx] && !flagged[yy][xx]) { //Checks whether the current square in the 3x3 is already visible and/or flagged
+                            visible[yy][xx] = true; //Makes the covered square uncovered
+                            domainExpansion(yy, xx); //Reruns the method to expand recursively
                         }
                     }
                 }
             }
         }
-        if (grid[y][x] > 0) {
-            if (!visible[y][x] && !flagged[y][x]) {
+        if (grid[y][x] > 0) { //Runs when the clicked square is not completely safe (has surrounding mines)
+            //Reveals only the current square (not a 3x3)
+            if (!visible[y][x] && !flagged[y][x]) { 
                 visible[y][x] = true;
                 domainExpansion(y, x);
             }
         }
     }
+
+    /*
+     * This method is called on every left mouse click and nowhere else.
+     * This method is used to determine whether the game has been either won or lost.
+     * It does this by checking whether the clicked square is both visible and a bomb.
+     * If it is, it then loops through the bombs array and making all of the bombs visible
+     * by checking whether there is a bomb there or not.
+     * After this it stops the timer and gameRunning variable and starts a new timer which allows
+     * for the bombs to all be revealed before the gameOver method is called.
+     * To check whether the game has been won or not it loops throught the visible array and 
+     * adds to a count for every visible square.
+     * Then with this count, it is checked whether the count is equal to the number of total squares on the board
+     * minus the flags.
+     * It then does similar actions a losing to end the game.
+     */
 
     public void winCheck(int yy, int xx) {
         if (bombs[yy][xx] && visible[yy][xx]) {
@@ -651,6 +692,7 @@ class gui implements MouseListener {
             delayTimer.setRepeats(false);
             delayTimer.start();
         }
+
         int count = 0;
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
@@ -659,6 +701,7 @@ class gui implements MouseListener {
                 }
             }
         }
+
         if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
