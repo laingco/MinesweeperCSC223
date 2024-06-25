@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.18
+ * Version - 1.19
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -29,37 +29,37 @@ class gui implements MouseListener {
     private JLabel flagsLabel = new JLabel("Flags left: " + flags); //Flag count label
     private boolean gameRunning = true; //Stores whether the game is running or not
 
-    ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
-    Image image = temp1.getImage(); //Converts to an standard image for resizing
-    Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH); //Resizes the image
-    ImageIcon resetImage = new ImageIcon(newimg); //Converts the image back to an image icon.
+    private ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
+    private Image image = temp1.getImage(); //Converts to an standard image for resizing
+    private Image newimg = image.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH); //Resizes the image
+    private ImageIcon resetImage = new ImageIcon(newimg); //Converts the image back to an image icon.
 
     //See above
-    ImageIcon temp2 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/flagImage.png");
-    Image image2 = temp2.getImage();
-    Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-    ImageIcon flagImage = new ImageIcon(newimg2);
+    private ImageIcon temp2 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/flagImage.png");
+    private Image image2 = temp2.getImage();
+    private Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+    private ImageIcon flagImage = new ImageIcon(newimg2);
 
     //See above
-    ImageIcon temp4 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/bombImage.png");
-    Image image4 = temp4.getImage();
-    Image newimg4 = image4.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
-    ImageIcon bombImage = new ImageIcon(newimg4);
+    private ImageIcon temp3 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/bombImage.png");
+    private Image image3 = temp3.getImage();
+    private Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+    private ImageIcon bombImage = new ImageIcon(newimg3);
 
-    JButton reset = new JButton(resetImage); //Reset button
-    JMenuItem easy = new JMenuItem("Easy"); //Easy button
-    JMenuItem medium = new JMenuItem("Medium"); //Medium button
-    JMenuItem hard = new JMenuItem("Hard"); //Hard button
-    JMenuItem white = new JMenuItem("White"); //White button
-    JMenuItem green = new JMenuItem("Green (default)"); //Green button
-    JMenuItem blue = new JMenuItem("Blue"); //Blue button
-    JMenuItem blueAndRed = new JMenuItem("Blue and Red"); //Blue and red button
-    JMenuItem purpleAndGreen = new JMenuItem("Purple and Green"); //Purple and green button
-    int elapsedTime = 0; //Stores how long the curren t game has been going
-    JLabel time = new JLabel("Time: " + elapsedTime + "s"); //Time label
-    boolean plantedMines = false; //Stores whether the mines hae been planted yet
-
-    Timer timer = new Timer(1000, new ActionListener() { //Timer which is used for timing the game.
+    private JButton reset = new JButton(resetImage); //Reset button
+    private JMenuItem easy = new JMenuItem("Easy"); //Easy button
+    private JMenuItem medium = new JMenuItem("Medium"); //Medium button
+    private JMenuItem hard = new JMenuItem("Hard"); //Hard button
+    private JMenuItem white = new JMenuItem("White"); //White button
+    private JMenuItem green = new JMenuItem("Green (default)"); //Green button
+    private JMenuItem blue = new JMenuItem("Blue"); //Blue button
+    private JMenuItem blueAndRed = new JMenuItem("Blue and Red"); //Blue and red button
+    private JMenuItem purpleAndGreen = new JMenuItem("Purple and Green"); //Purple and green button
+    private int elapsedTime = 0; //Stores how long the curren t game has been going
+    private JLabel time = new JLabel("Time: " + elapsedTime + "s"); //Time label
+    private boolean plantedMines = false; //Stores whether the mines hae been planted yet
+ 
+    private Timer timer = new Timer(1000, new ActionListener() { //Timer which is used for timing the game.
         public void actionPerformed(ActionEvent e) {
             updateTimeLabel();
         }
@@ -450,32 +450,36 @@ class gui implements MouseListener {
 
     public void plantMines(int xx, int yy) {
         int z = 0;
-        int grid[][] = gridPicker();
+        int grid[][] = gridPicker(); //Retrieves the approriate difficulty grid
         int[][] nearbyMines = new int[gridSize[2 * difficulty - 2]][gridSize[2 * difficulty - 1]];
-        while (z < flagSize[difficulty - 1] && !plantedMines) {
-            int randX = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 1]);
-            int randY = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 2]);
-            if (!(grid[randY][randX] == -1)
+        
+        //Plants mines
+        while (z < flagSize[difficulty - 1] && !plantedMines) { //Loops intil all mines are planted
+            int randX = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 1]); //Random x value withing the correct range based on the difficulty variable
+            int randY = (int) Math.floor(Math.random() * gridSize[2 * difficulty - 2]); //Random y value withing the correct range based on the difficulty variable
+            if (!(grid[randY][randX] == -1) //Ensures the random number is not already a bomb
                     && !(randX == xx - 1 && randY == yy - 1) && !(randX == xx && randY == yy - 1)
                     && !(randX == xx + 1 && randY == yy - 1)
                     && !(randX == xx - 1 && randY == yy) && !(randX == xx && randY == yy)
                     && !(randX == xx + 1 && randY == yy)
                     && !(randX == xx - 1 && randY == yy + 1) && !(randX == xx && randY == yy + 1)
                     && !(randX == xx + 1 && randY == yy + 1)) {
-                grid[randY][randX] = -1;
+                grid[randY][randX] = -1; //Temporarily fills the grid with -1 where the mines are
                 System.out.print(randX);
                 System.out.print(randY + "b ");
-                bombs[randY][randX] = true;
-                z++;
+                bombs[randY][randX] = true; //Updates the bombs array to reflect ehere the mines are placed
+                z++; //Increases count if mine planted
             }
         }
 
+        //Resets the nearbyMines array
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                nearbyMines[y][x] = 0/* grid[y][x] */;
+                nearbyMines[y][x] = 0; 
             }
         }
-
+        
+        //Diagnostic text
         System.out.println();
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
@@ -484,44 +488,45 @@ class gui implements MouseListener {
             System.out.println();
         }
 
+        //Fills the nearbyMines array
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                if (x > 0) {
+                if (x > 0) { //Makes sure the if statements don't check out of bounds to the left
                     if (grid[y][x - 1] == -1) {
                         nearbyMines[y][x]++;
                     }
-                    if (y > 0) {
+                    if (y > 0) { //Makes sure the if statements don't check out of bounds upwards
                         if (grid[y - 1][x - 1] == -1) {
                             nearbyMines[y][x]++;
                         }
                     }
-                    if (y + 1 < gridSize[2 * difficulty - 2]) {
+                    if (y + 1 < gridSize[2 * difficulty - 2]) { //Makes sure the if statements don't check out of bounds downwards
                         if (grid[y + 1][x - 1] == -1) {
                             nearbyMines[y][x]++;
                         }
                     }
                 }
-                if (x + 1 < gridSize[2 * difficulty - 1]) {
+                if (x + 1 < gridSize[2 * difficulty - 1]) { //Makes sure the if statements don't check out of bounds to the right
                     if (grid[y][x + 1] == -1) {
                         nearbyMines[y][x]++;
                     }
-                    if (y > 0) {
+                    if (y > 0) { //Makes sure the if statements don't check out of bounds upwards
                         if (grid[y - 1][x + 1] == -1) {
                             nearbyMines[y][x]++;
                         }
                     }
-                    if (y + 1 < gridSize[2 * difficulty - 2]) {
+                    if (y + 1 < gridSize[2 * difficulty - 2]) { //Makes sure the if statements don't check out of bounds downwards
                         if (grid[y + 1][x + 1] == -1) {
                             nearbyMines[y][x]++;
                         }
                     }
                 }
-                if (y > 0) {
+                if (y > 0) { //Makes sure the if statements don't check out of bounds upwards
                     if (grid[y - 1][x] == -1) {
                         nearbyMines[y][x]++;
                     }
                 }
-                if (y + 1 < gridSize[2 * difficulty - 2]) {
+                if (y + 1 < gridSize[2 * difficulty - 2]) { //Makes sure the if statements don't check out of bounds downwards
                     if (grid[y + 1][x] == -1) {
                         nearbyMines[y][x]++;
                     }
@@ -532,8 +537,9 @@ class gui implements MouseListener {
 
             }
         }
-        grid = nearbyMines;
+        grid = nearbyMines; //Copies the contents of the temporary nearbyMines array to the grid array
 
+        //Prints out the grid array for diagnostic purposes
         System.out.println();
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
@@ -542,6 +548,7 @@ class gui implements MouseListener {
             System.out.println();
         }
 
+        //Copies the temporary grid array into the appropriate difficulty array based on the difficulty variable
         switch (difficulty) {
             case 1:
                 easyGrid = grid;
@@ -555,9 +562,14 @@ class gui implements MouseListener {
             default:
                 break;
         }
-        guiMethod();
+        guiMethod(); //Resets the screen
         plantedMines = true;
     }
+
+    /*
+     * This method is used whenever you change the difficulty, press the reset button and when you win/lose the game.
+     * This method resets all relevant arrays oto their default states to allow for the game to be played again.
+     */
 
     public void resetGrids() {
         for (int y = 0; y < gridSize[0]; y++) {
@@ -586,6 +598,18 @@ class gui implements MouseListener {
         timer.restart();
         timer.stop();
     }
+
+    /*
+     * This method is called every time the player clicks and also under certain conditions inside the method itself.
+     * In this method it first gets the grid for the current difficulty and then checks whether the inputed value is safe (0) and
+     * then it loops through the 3x3 around the player click, for each square in the 3x3 it checks whever it is out of bounds and 
+     * if its is not out of bounds it chechs whether that square is alrady not visible and not flagged if so it sets the square to visible and
+     * reruns the method again.
+     * If the original inputted value is not a 0 it checks if the square is not yet visible and not flagged and then makes it visible and 
+     * runs the method again.
+     * 
+     * What this ends up doing is recursively expanding safe squares stopping when it reaches an unknown square.
+     */
 
     public void domainExpansion(int y, int x) {
         int grid[][] = gridPicker();
