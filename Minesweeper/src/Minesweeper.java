@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.21
+ * Version - 1.22
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -15,6 +15,7 @@ import java.util.Scanner;
 class gui implements MouseListener {
     private static int SCREEN_WIDTH = 1050;
     private static int SCREEN_HEIGHT = 900;
+    private String dir = System.getProperty("user.dir");
     private int difficulty = 2; //The overall difficulty variable which any difficulty dependent value uses
     private int gridSize[] = { 8, 10, 14, 18, 20, 24 }; //Array to store grid sizes and uses the difficulty variable to retrieve correct size
     private int flagSize[] = { 10, 40, 99 }; //The flag count for each difficulty
@@ -30,29 +31,29 @@ class gui implements MouseListener {
     private int flags = 0; //Stores how many flags are remaining
     private JLabel flagsLabel = new JLabel("Flags left: " + flags); //Flag count label
     private boolean gameRunning = true; //Stores whether the game is running or not
-    private File gamesPlayed = new File("MinesweeperCSC223/Minesweeper/assets/gamesPlayed.txt");
+    private File gamesPlayed = new File(dir+"/Minesweeper/assets/gamesPlayed.txt");
     private int games = 0;
     private JLabel gameCounter = new JLabel("|  Games played (all time): " + games);
 
-    private ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
+    private ImageIcon temp1 = new ImageIcon(dir+"/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
     private Image image1 = temp1.getImage(); //Converts to an standard image for resizing
     private Image newimg1 = image1.getScaledInstance(15, 15, java.awt.Image.SCALE_SMOOTH); //Resizes the image
     private ImageIcon resetImage = new ImageIcon(newimg1); //Converts the image back to an image icon.
 
     //See above
-    private ImageIcon temp2 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/flagImage.png");
+    private ImageIcon temp2 = new ImageIcon(dir+"/Minesweeper/assets/flagImage.png");
     private Image image2 = temp2.getImage();
     private Image newimg2 = image2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     private ImageIcon flagImage = new ImageIcon(newimg2);
 
     //See above
-    private ImageIcon temp3 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/bombImage.png");
+    private ImageIcon temp3 = new ImageIcon(dir+"/Minesweeper/assets/bombImage.png");
     private Image image3 = temp3.getImage();
     private Image newimg3 = image3.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
     private ImageIcon bombImage = new ImageIcon(newimg3);
 
     //See above
-    private ImageIcon temp4 = new ImageIcon("Minesweeper/assets/dropdownArrow.png");
+    private ImageIcon temp4 = new ImageIcon(dir+"/Minesweeper/assets/dropdownArrow.png");
     private Image image4 = temp4.getImage();
     private Image newimg4 = image4.getScaledInstance(12, 12, java.awt.Image.SCALE_SMOOTH);
     private ImageIcon dropdownImage = new ImageIcon(newimg4);
@@ -82,7 +83,7 @@ class gui implements MouseListener {
     private int elapsedTime = 0; //Stores how long the curren t game has been going
     private JLabel time = new JLabel("|  Time: " + elapsedTime + "s"); //Time label
     private boolean plantedMines = false; //Stores whether the mines hae been planted yet
- 
+
     private Timer timer = new Timer(1000, new ActionListener() { //Timer which is used for timing the game.
         public void actionPerformed(ActionEvent e) {
             updateTimeLabel();
