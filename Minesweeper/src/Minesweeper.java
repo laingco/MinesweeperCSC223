@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.20
+ * Version - 1.21
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -9,6 +9,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.Scanner;
 
 class gui implements MouseListener {
     private static int SCREEN_WIDTH = 1050;
@@ -28,6 +30,9 @@ class gui implements MouseListener {
     private int flags = 0; //Stores how many flags are remaining
     private JLabel flagsLabel = new JLabel("Flags left: " + flags); //Flag count label
     private boolean gameRunning = true; //Stores whether the game is running or not
+    private File gamesPlayed = new File("MinesweeperCSC223/Minesweeper/assets/gamesPlayed.txt");
+    private int games = 0;
+    private JLabel gameCounter = new JLabel("|  Games played (all time): " + games);
 
     private ImageIcon temp1 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/resetButtonImage.png"); //Defines the source image as an icon
     private Image image1 = temp1.getImage(); //Converts to an standard image for resizing
@@ -47,7 +52,7 @@ class gui implements MouseListener {
     private ImageIcon bombImage = new ImageIcon(newimg3);
 
     //See above
-    private ImageIcon temp4 = new ImageIcon("MinesweeperCSC223/Minesweeper/assets/dropdownArrow.png");
+    private ImageIcon temp4 = new ImageIcon("Minesweeper/assets/dropdownArrow.png");
     private Image image4 = temp4.getImage();
     private Image newimg4 = image4.getScaledInstance(12, 12, java.awt.Image.SCALE_SMOOTH);
     private ImageIcon dropdownImage = new ImageIcon(newimg4);
@@ -75,7 +80,7 @@ class gui implements MouseListener {
     private JMenuItem blueAndRed = new JMenuItem("Blue and Red"); //Blue and red button
     private JMenuItem purpleAndGreen = new JMenuItem("Purple and Green"); //Purple and green button
     private int elapsedTime = 0; //Stores how long the curren t game has been going
-    private JLabel time = new JLabel("Time: " + elapsedTime + "s"); //Time label
+    private JLabel time = new JLabel("|  Time: " + elapsedTime + "s"); //Time label
     private boolean plantedMines = false; //Stores whether the mines hae been planted yet
  
     private Timer timer = new Timer(1000, new ActionListener() { //Timer which is used for timing the game.
@@ -155,16 +160,17 @@ class gui implements MouseListener {
 
         //Sets up labels
         elapsedTime = 0; //Resets the timer count
-        time.setText("Time: " + elapsedTime + "s"); //Sets the timer text
+        time.setText("|  Time: " + elapsedTime + "s"); //Sets the timer text
         JMenuBar menu = new JMenuBar(); //Defines the menu bar
         JMenu difficultyDropdown = new JMenu("Difficulty"); //Adds difficulty menu
         JLabel dropdownArrow1 = new JLabel(dropdownImage); //Adds dropdown arrow
-        JMenu colours = new JMenu("Colours"); //Adds colour menu
+        JMenu colours = new JMenu("|  Colours"); //Adds colour menu
         JLabel dropdownArrow2 = new JLabel(dropdownImage); //Adds dropdown arrow
         JLabel difficultyLabel = new JLabel("Difficulty: " + difficultyPicker()); //Sets the difficulty label
         flags = flagSize[difficulty - 1]; //Sets the flag count
         flagsLabel.setText("Flags left: " + flags); //Updated flag label
-        JMenu infoMenu = new JMenu("How to play");
+        JMenu infoMenu = new JMenu("|  How to play");
+        updateGamesPlayed(false);
 
         //Fills tiles array
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
@@ -207,6 +213,7 @@ class gui implements MouseListener {
         score.add(time);
         score.add(menu);
         score.add(difficultyLabel);
+        score.add(gameCounter);
         infoMenu.add(infoPanel);
 
         //Assign jpanel positions and set visible
@@ -235,6 +242,7 @@ class gui implements MouseListener {
                 }
             }
         }
+
         drawPattern();
         System.out.println("Screen updated");
     }
@@ -705,9 +713,8 @@ class gui implements MouseListener {
         if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
-            Timer delayTimer2 = new Timer(100, e -> gameOver(1));
-            delayTimer2.setRepeats(false);
-            delayTimer2.start();
+            gameOver(1);
+
         }
     }
 
@@ -759,6 +766,26 @@ class gui implements MouseListener {
             endScreen.setFont(new Font("Serif", Font.PLAIN, 50));
             jframe.add(endScreen);
         }
+        updateGamesPlayed(true);
+    }
+
+    public void updateGamesPlayed(boolean played){
+        try{
+            Scanner fileScanner = new Scanner(gamesPlayed);
+            while (fileScanner.hasNextInt()){
+                games = fileScanner.nextInt();
+            }
+            if (played){games++;};
+            FileWriter fileWriter = new FileWriter(gamesPlayed);
+            fileWriter.write(String.valueOf(games));
+            fileWriter.flush();
+            fileWriter.close();
+            fileScanner.close();
+            System.out.println("Total games played: " + (games));
+        }catch(IOException e){
+            System.out.println(e);
+        }
+        gameCounter.setText("|  Games played (all time): " + games);;
     }
 
     public void mousePressed(MouseEvent e) {
