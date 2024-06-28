@@ -180,6 +180,7 @@ class gui implements MouseListener {
                 tiles[y][x].addMouseListener(this); //Makes each tile listen for a mouse click
                 tiles[y][x].setFont(new Font("Serif", Font.PLAIN, 20)); 
                 tiles[y][x].setBorderPainted(false); //Removes button border
+                tiles[y][x].setOpaque(true); //Makes tiles visible on macos
                 tiles[y][x].setMargin(new Insets(0, 0, 0, 0)); //Allows for larger text
                 playArea.add(tiles[y][x]);
             }
