@@ -1,6 +1,6 @@
 
 /**
- * Version - 1.23
+ * Version - 1.24
  * This is a simple minesweeper game made in java.
  *
  * Author - Cooper Laing
@@ -687,8 +687,8 @@ class gui implements MouseListener {
      */
 
     public void winCheck(int yy, int xx) {
-        if (bombs[yy][xx] && visible[yy][xx]) {
-            for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++) {
+        if (bombs[yy][xx] && visible[yy][xx]) { //Only check if the tile clicked is visible and a bomb
+            for (int yyy = 0; yyy < gridSize[2 * difficulty - 2]; yyy++) { //Make all bombs visible
                 for (int xxx = 0; xxx < gridSize[2 * difficulty - 1]; xxx++) {
                     if (bombs[yyy][xxx]) {
                         tiles[yyy][xxx].setIcon(bombImage);
@@ -698,11 +698,12 @@ class gui implements MouseListener {
             }
             gameRunning = false;
             timer.stop();
-            Timer delayTimer = new Timer(100, e -> gameOver(0));
+            Timer delayTimer = new Timer(100, e -> gameOver(0)); //Run game ovver method after a delay to allow bombs to be uncovered
             delayTimer.setRepeats(false);
             delayTimer.start();
         }
 
+        //Counts up all visible squares
         int count = 0;
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
@@ -711,7 +712,8 @@ class gui implements MouseListener {
                 }
             }
         }
-
+        
+        //Makes the game end in a win condition if the total number of visible squares is equal to the total number of squares minus the mines
         if (count == (gridSize[2 * difficulty - 2] * gridSize[2 * difficulty - 1]) - flagSize[difficulty - 1]) {
             gameRunning = false;
             timer.stop();
@@ -719,6 +721,12 @@ class gui implements MouseListener {
 
         }
     }
+
+    /*
+     * This method is called in  the game over method when the game ends.
+     * This method is used to remove the buildup of mouse listeners when the game ends and 
+     * to stop the player from being able to click anything other than intended.
+     */
 
     public void stopListeners() {
         jframe.getContentPane().removeAll();
@@ -733,10 +741,20 @@ class gui implements MouseListener {
         purpleAndGreen.removeMouseListener(this);
     }
 
+    /*
+     * This method is called in the win checker when the game is detected as being won or lost.
+     * In this method it checks whether a 1 or a 0 was imputted to indicate whether the game was won or lost.
+     * If the game was won it waits 2.5 seconds adn then calls the stop listeners method.
+     * It then creates the end screen JButton which has an action listener to call the reset grids and gui method methods to reset the game.
+     * If the game was lost it immediately calls the stop listeners and 
+     * then does the same process for creating the end screen JButton.
+     * After this it calls the update games played method to update the all time game count.
+     */
+
     public void gameOver(int state) {
         if (state == 0) {
             try{
-                Thread.sleep(2500);
+                Thread.sleep(2500); //Wait 2.5 seconds
             }catch(InterruptedException e){
                 System.out.println(e);
             }
@@ -771,50 +789,67 @@ class gui implements MouseListener {
         updateGamesPlayed(true);
     }
 
+    /*
+     * This method is called when the game is being set up in gui method and at the end of game over.
+     * This method updates the total games played file with an increasing value every time it is called with the true statement.
+     * When it is called with false inputted it updates the file without increasing the games played count.
+     */
+
     public void updateGamesPlayed(boolean played){
         try{
-            Scanner fileScanner = new Scanner(gamesPlayed);
-            while (fileScanner.hasNextInt()){
-                games = fileScanner.nextInt();
+            Scanner fileScanner = new Scanner(gamesPlayed); //Defines the file reader
+            while (fileScanner.hasNextInt()){ //Error checking
+                games = fileScanner.nextInt(); //Takes the store integer
             }
-            if (played){games++;};
-            FileWriter fileWriter = new FileWriter(gamesPlayed);
-            fileWriter.write(String.valueOf(games));
+            if (played){games++;}; //Checks the imputted boolean before increasing the count
+            FileWriter fileWriter = new FileWriter(gamesPlayed); //Defines the file writer
+            fileWriter.write(String.valueOf(games)); //Converts and writes the games variable as a string
             fileWriter.flush();
             fileWriter.close();
             fileScanner.close();
-            System.out.println("Total games played: " + (games));
+            System.out.println("Total games played: " + (games)); //Console output
         }catch(IOException e){
             System.out.println(e);
         }
-        gameCounter.setText("|  Games played (all time): " + games);;
+        gameCounter.setText("|  Games played (all time): " + games); //Update the JLabel
     }
 
+    /*
+     * This method is called whenever a mouse click is registered by the mouse listeners.
+     * This method handles all of the mouse listeners.
+     * In the start of this method it loops though the tiles array whilst comparing the registered left or right mouse click to each tile
+     * in order to find the tile clicked.
+     * It then runs the accompanying code for the click.
+     * Further down in the method it checks for each of the different colour schemes and whether they have been clicked and
+     * changes the appropriate variables based upon the click.
+     * At the end of the method it checks for each of the difficulty clicks and the reset button. When they are clicked the appropriate variables are changed and
+     * medthods are called.
+     */
+    
     public void mousePressed(MouseEvent e) {
-        // int currentGrid[][] = gridPicker();
         for (int y = 0; y < gridSize[2 * difficulty - 2]; y++) {
             for (int x = 0; x < gridSize[2 * difficulty - 1]; x++) {
-                if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON1) {
+                if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON1) { //Runs if the current tile has been clicked and it was a left click
                     System.out.println("Clicked button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
-                    if (gameRunning) {
-                        if (!plantedMines) {
+                    if (gameRunning) { //Runs nothing if game is over/
+                        if (!plantedMines) { //Plants mines of not yet planted
                             plantMines(x, y);
                         }
-                        if (!timer.isRunning()) {
+                        if (!timer.isRunning()) { //Starts timer if not yet started
                             timer.start();
                         }
-                        domainExpansion(y, x);
-                        updateScreen();
-                        winCheck(y, x);
+                        domainExpansion(y, x); //Expands the tiles
+                        updateScreen(); 
+                        winCheck(y, x); //Checks for a win
                     }
-                } else if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON3) {
+                } else if (tiles[y][x] == e.getSource() && e.getButton() == MouseEvent.BUTTON3) { //Runs if the current tile has been ckcicked and it was a right click
                     System.out.println("Flagged button at (x, y): (" + (x + 1) + ", " + (y + 1) + ")");
                     if (gameRunning) {
-                        if (tiles[y][x].getIcon() == flagImage) {
+                        if (tiles[y][x].getIcon() == flagImage) { //Runs if clicked tile is a flag
                             flags++;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = false;
-                        } else if (!visible[y][x]) {
+                        } else if (!visible[y][x]) { //Runs if clicked tile ha not been uncovered yet
                             flags--;
                             flagsLabel.setText("Flags left: " + flags);
                             flagged[y][x] = true;
@@ -826,6 +861,7 @@ class gui implements MouseListener {
             }
         }
 
+        //Checks each colour, difficulty and reset buttons and runs appropriate code
         if (e.getSource() == white) {
             coloursInt = 0;
             System.out.println("white");
@@ -846,9 +882,7 @@ class gui implements MouseListener {
             coloursInt = 4;
             System.out.println("purple and green");
             updateScreen();
-        }
-
-        if (e.getSource() == easy) {
+        } else if (e.getSource() == easy) {
             difficulty = 1;
             resetGrids();
             guiMethod();
@@ -866,6 +900,10 @@ class gui implements MouseListener {
         }
     }
 
+    /*
+     * Redundant code for mouse listener implementation.
+     */
+
     @Override
     public void mouseClicked(MouseEvent e) {
     }
@@ -881,6 +919,11 @@ class gui implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
     }
+
+    /*
+     * This method is called when you run the game.
+     * It fills the arrays with default values and runs the gui method to set it up.
+     */
 
     public static void main(String args[]) {
         gui sm = new gui();
