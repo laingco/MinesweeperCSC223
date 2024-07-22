@@ -759,7 +759,7 @@ class gui implements MouseListener {
                 System.out.println(e);
             }
             stopListeners();
-            JButton endScreen = new JButton("<html>Game Over! You Lost!<br>Press the button to try again.</html>");
+            JButton endScreen = new JButton("<html><center>Game Over!<br>You Lost.<br>Press the button to try again.</center></html>");
             endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3, (SCREEN_HEIGHT / 5) * 3);
             endScreen.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -774,7 +774,7 @@ class gui implements MouseListener {
         } else {
             stopListeners();
             JButton endScreen = new JButton(
-                    "<html>You won in " + elapsedTime + " seconds!<br>Press the button to play again.</html>");
+                    "<html><center>You won in " + elapsedTime + " seconds!<br>Press the button to play again.</center></html>");
             endScreen.setBounds(SCREEN_WIDTH / 5, SCREEN_HEIGHT / 5, (SCREEN_WIDTH / 5) * 3, (SCREEN_HEIGHT / 5) * 3);
             endScreen.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
